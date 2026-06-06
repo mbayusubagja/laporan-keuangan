@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/login.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<h3>Login / Register</h3>
+
+<input id="noHp" placeholder="No HP (62xxx)">
+<input id="password" type="password" placeholder="Password">
+
+<div class="toggle" onclick="togglePass()">👁 Lihat Password</div>
+
+<p id="status"></p>
+
+<button id="loginBtn" onclick="login()">Login</button>
+<button id="registerBtn" onclick="register()">Register</button>
+
+<a class="lupaPassword"
+href="https://wa.me/6281214741203?text=Assalamualaikum%2C%20saya%20lupa%20password%20akun%20saya."
+target="_blank">
+Lupa Password?
+</a>
+
+</div>
+
+</div>
+
+<footer id="footer">
+© 2026 Laporan Keuangan Operasional
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/login.js"></script>
+
+</body>
+</html>

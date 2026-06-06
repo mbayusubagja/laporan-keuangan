@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Dashboard</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/dashboard.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+
+      <div class="headerTop">
+
+        <h2>Laporan Keuangan</h2>
+
+        <div class="keepLoginBox">
+          <span>Always<br>
+            Login</span>
+
+          <label class="switch">
+            <input type="checkbox" id="rememberLogin">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+      </div>
+
+      <p>
+        Login :
+        <strong id="userInfo"></strong>
+      </p>
+
+      <div id="ringkasanBulan" class="ringkasanBulan">
+        <div class="itemRingkasan">
+          <span>Pemasukan:</span><br>
+          <strong id="totalMasukBulan">Rp ...</strong>
+        </div>
+
+        <div class="itemRingkasan">
+        <span>Pengeluaran:</span><br>
+        <strong id="totalKeluarBulan">Rp ...</strong>
+        </div>
+      </div>
+
+  </div>
+
+  <div class="card">
+
+    <div style="margin:0; padding:0; color:#777; font-size:12px;">Total Saldo :</div>
+
+    <div id="saldo" class="saldo">
+    Rp ...
+    </div>
+
+  </div>
+
+  <div class="card">
+
+      <p style="margin:0; padding:0; color:#777; font-size:12px;">Transaksi Terbaru :</p>
+
+      <div id="listTransaksi">
+
+        <div class="kosong">
+        Loading...
+        </div>
+
+      </div>
+
+  </div>
+
+  <div class="menu">
+    <div class="card">
+        <p style="margin:0; padding:0; color:#777; font-size:12px;">Menu :</p>
+
+          <button onclick="tambahPemasukan()">Pemasukan</button>
+          <button onclick="tambahPengeluaran()">Pengeluaran</button>
+
+          <button class="menuToggle" style="background-color: #333333;" onclick="toggleMenu()">
+            Menu lainnya ▼
+          </button>
+
+        <div id="menuList" class="menuList hidden">
+
+
+          <button onclick="lihatRiwayatTransaksi()">Riwayat Transaksi</button>
+          <button onclick="lihatLaporan()">Laporan</button>
+
+        </div>
+    </div>
+  </div>
+
+  <div class="card">
+      <button class="logoutBtn" onclick="logout()">
+      Logout
+      </button>
+  </div>
+
+</div>
+
+<footer id="footer">
+© 2026 Laporan Keuangan Operasional
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/dashboard.js"></script>
+
+
+</body>
+</html>

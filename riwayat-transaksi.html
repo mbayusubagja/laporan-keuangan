@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laporan</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/button.css">
+
+
+</head>
+
+<body>
+
+
+
+<div class="container">
+
+<div class="header">
+<h2>Riwayat Transaksi</h2>
+</div>
+
+<div class="card">
+  <h3>Bulan</h3>
+  <div id="listBulan">Loading...</div>
+</div>
+
+<div
+  class="card"
+  id="cardListTanggal"
+  style="display:none;"
+>
+
+  <div
+    class="menuLaporan"
+    id="menuLaporan"
+    style="display:none;"
+  >
+
+    <div
+      id="menuRincian"
+      class="menuAktif"
+      onclick="showTab('rincian')"
+    >
+      Rincian
+    </div>
+
+    <div
+      id="menuKategori"
+      onclick="showTab('kategori')"
+    >
+      Kategori
+    </div>
+
+  </div>
+
+  <div id="tabRincian">
+
+    <div id="listTanggal"></div>
+
+  </div>
+
+  <div
+    id="tabKategori"
+    style="display:none;"
+  >
+
+    <div id="listKategori"></div>
+
+  </div>
+
+</div>
+
+<div id="modalOverlay" class="modalOverlay" style="display:none;">
+  <div class="modalBox">
+
+    <div class="modalHeader">
+      <h3>Detail Transaksi</h3>
+      <button onclick="closeModal()">✕</button>
+    </div>
+
+    <div id="modalContent" class="modalContent">
+      <!-- isi dinamis -->
+    </div>
+
+  </div>
+</div>
+
+<div class="card"><button class="btnBack">Kembali</button></div>
+
+</div>
+
+<footer id="footer">
+© 2026 Laporan Keuangan Operasional
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/riwayat-transaksi.js"></script>
+<script src="js/download-laporan.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@latest/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@latest/dist/jspdf.plugin.autotable.js"></script>
+
+</body>
+</html>

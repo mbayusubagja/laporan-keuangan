@@ -1,0 +1,31 @@
+.toggle{
+  font-size:12px;
+  cursor:pointer;
+  color:blue;
+}
+
+.btnAdmin{
+  top:40px;
+  right:25%;
+  width:100px;
+  background:#04AA6D;
+  cursor:pointer;
+  box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+.btnAdmin:hover{
+  background:#037a52;
+}
+
+.lupaPassword{
+  display:inline-block;
+  margin-top:10px;
+  text-decoration:none;
+}
+
+#footer{
+  text-align:center;
+  margin-top:40px;
+  color:#777;
+  font-size:14px;
+}
