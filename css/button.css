@@ -14,9 +14,8 @@ padding-bottom:100px;
 
 /* HEADER */
 .header{
-padding:20px;
+padding:16px;
 background:white;
-border-bottom:1px solid #eee;
 position:sticky;
 top:0;
 z-index:10;
@@ -438,6 +437,7 @@ cursor:pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 15px;
 }
 
 .modalContent div {
@@ -472,4 +472,63 @@ body.modalOpen{
 .modalRow img{
   object-fit:cover;
   max-height:250px;
+}
+
+.transaksiItem:hover {
+  background: #f5f5f5;
+}
+
+.itemRingkasan{
+  flex:1;
+  min-width:0; /* penting */
+  background:rgba(230, 220, 220, 0.15);
+  padding:10px;
+  border-radius:8px;
+  margin-bottom: 10px;
+}
+
+.itemRingkasan strong{
+  color:white;
+  font-size:clamp(13px, 3.5vw, 15px);
+  font-weight:600;
+}
+
+/* ================= IMAGE PREVIEW OVERLAY ================= */
+#imagePreviewOverlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+
+  /* animasi halus */
+  animation: fadeIn .2s ease;
+}
+
+/* gambar preview */
+#imagePreviewFull{
+  max-width: 92%;
+  max-height: 92%;
+  border-radius: 12px;
+
+  /* biar enak dilihat */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+
+  /* efek masuk */
+  animation: zoomIn .2s ease;
+  cursor: zoom-out;
+}
+
+/* animasi background */
+@keyframes fadeIn{
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* animasi gambar */
+@keyframes zoomIn{
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }

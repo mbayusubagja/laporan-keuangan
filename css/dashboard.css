@@ -1,5 +1,5 @@
 .header{
-  background:#3B82C4;
+  background:#333333;
   color:white;
   padding:20px;
   border-radius:16px;
@@ -16,7 +16,7 @@
 }
 
 .card{
-  background:white;
+  background:#ffffff;
   border-radius:16px;
   padding:16px;
   margin-bottom:16px;
@@ -41,11 +41,15 @@
   padding:16px;
   border:none;
   border-radius:8px;
-  background:#3B82C4;
+  background:#666666;
   color:white;
   font-size:15px;
   cursor:pointer;
   transition:0.2s;
+}
+
+#btnPengeluaran{
+  background:#666666;
 }
 
 .menu button:hover{

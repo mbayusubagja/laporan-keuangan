@@ -28,7 +28,7 @@ input{
 button{
   width:100%;
   padding:12px;
-  background:#3B82C4;
+  background:#333333;
   color:white;
   border:none;
   border-radius:8px;
@@ -38,7 +38,7 @@ button{
 }
 
 button:hover{
-  background:#2F6FA8;
+  background:#666666;
   transform:translateY(-2px);
 }
 

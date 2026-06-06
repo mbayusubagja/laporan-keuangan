@@ -179,8 +179,8 @@ doc.autoTable({
 // ================= LAMPIRAN =================
 doc.addPage();
 
-doc.setFontSize(14);
-doc.text("Lampiran Transaksi", 14, 15);
+doc.setFontSize(18);
+doc.text("Lampiran Transaksi", 105, 15, { align: "center" });
 
 let y = 25;
 let no = 1;

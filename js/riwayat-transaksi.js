@@ -255,7 +255,7 @@ async function loadRiwayat(){
           <div class="btnDownloadPdf">
             <button
               class="btnPdf"
-              onclick="downloadLaporanPDF('${key}')"
+              onclick="handleDownloadPDF(this, '${key}')"
             >
               📄 Download PDF
             </button>
@@ -434,23 +434,13 @@ function renderTransaksi(data, tanggal){
         ">
 
         <div>
-          <strong>${trx.kategori}</strong> ${formatJam(trx)}
+          ${formatJam(trx)}<br>
+          
+          <strong>${trx.kategori}</strong> 
 
           <div class="jenis"><br>
 
           catatan : ${trx.catatan || "-"}
-
-            <br><br>
-
-            ${
-              trx.jenis === "masuk"
-              ? `Masuk ke ${trx.sumber_tujuan_nama}`
-
-              : trx.jenis === "keluar"
-              ? `Keluar dari ${trx.sumber_asal_nama}`
-
-              : `${trx.sumber_asal_nama} → ${trx.sumber_tujuan_nama}`
-            }
 
           </div>
         </div>
@@ -472,7 +462,7 @@ function renderTransaksi(data, tanggal){
     item.style.cursor = "pointer";
 
     item.onclick = (e) => {
-      e.stopPropagation(); // 👈 INI KUNCINYA
+      e.stopPropagation(); // agar tidak klik dobel div
       openModal(trx);
     };
 
@@ -516,8 +506,13 @@ async function openModal(trx){
   }
 
     const imgHtml = base64
-    ? `<img src="${base64}"
-        style="width:100%;border-radius:10px;margin-top:10px;">`
+    ? `
+      <img 
+        src="${base64}" 
+        id="previewImage"
+        style="width:100%;border-radius:10px;margin-top:10px;cursor:pointer;"
+      >
+    `
     : `<div>Bukti tidak tersedia</div>`;
 
   document.getElementById("modalContent").innerHTML = `
@@ -550,6 +545,24 @@ async function openModal(trx){
   `;
 
 }
+
+// =================== preview image ====================
+
+document.addEventListener("click", function(e){
+
+  if(e.target.id === "previewImage"){
+    const overlay = document.getElementById("imagePreviewOverlay");
+    const img = document.getElementById("imagePreviewFull");
+
+    img.src = e.target.src;
+    overlay.style.display = "flex";
+  }
+
+  if(e.target.id === "imagePreviewOverlay"){
+    e.target.style.display = "none";
+  }
+
+});
 
 // ================== base64 image ==================
 async function getImageBase64(fileId) {
@@ -701,6 +714,26 @@ function updateButtonLoadMore(){
     btn.style.display = "none";
   } else {
     btn.style.display = "block";
+  }
+}
+
+// ===================== proses download pdf ========================
+
+async function handleDownloadPDF(btn, key) {
+  // disable tombol
+  btn.disabled = true;
+  const oldText = btn.innerHTML;
+  btn.innerHTML = "⏳ Sedang membuat PDF...";
+
+  try {
+    await downloadLaporanPDF(key);
+  } catch (err) {
+    console.error(err);
+    alert("Gagal download PDF");
+  } finally {
+    // balikin tombol
+    btn.disabled = false;
+    btn.innerHTML = oldText;
   }
 }
 

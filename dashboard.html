@@ -56,17 +56,19 @@
         </div>
       </div>
 
+      <div class="itemRingkasan" style="margin-top:16px;">
+
+          <div style="margin:0; padding:0; color:white; font-size:12px;">Total Saldo :</div>
+
+            <div id="saldo" class="saldo">
+              Rp ...
+            </div>
+
+      </div>
+
   </div>
 
-  <div class="card">
-
-    <div style="margin:0; padding:0; color:#777; font-size:12px;">Total Saldo :</div>
-
-    <div id="saldo" class="saldo">
-    Rp ...
-    </div>
-
-  </div>
+  
 
   <div class="card">
 
@@ -87,7 +89,7 @@
         <p style="margin:0; padding:0; color:#777; font-size:12px;">Menu :</p>
 
           <button onclick="tambahPemasukan()">Pemasukan</button>
-          <button onclick="tambahPengeluaran()">Pengeluaran</button>
+          <button onclick="tambahPengeluaran()" id="btnPengeluaran">Pengeluaran</button>
 
           <button class="menuToggle" style="background-color: #333333;" onclick="toggleMenu()">
             Menu lainnya ▼

@@ -8,13 +8,13 @@
   top:40px;
   right:25%;
   width:100px;
-  background:#04AA6D;
+  background:#666666;
   cursor:pointer;
   box-shadow:0 4px 10px rgba(0,0,0,0.2);
 }
 
 .btnAdmin:hover{
-  background:#037a52;
+  background:#777777;
 }
 
 .lupaPassword{
