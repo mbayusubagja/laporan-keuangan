@@ -65,6 +65,30 @@ const hasil = await res.json();
 
 const data = hasil.bulan[bulanKey] || [];
 
+const imageCache = {};
+
+await Promise.all(
+
+  data.map(async (trx) => {
+
+    if (!trx.url_image) return;
+
+    const fileId = toDriveDirectUrl(trx.url_image);
+
+    if (!fileId) return;
+
+    const imgBase64 = await getImageBase64(fileId);
+    const size = await getImageSize(imgBase64);
+
+    imageCache[fileId] = {
+      base64: imgBase64,
+      size: size
+    };
+
+  })
+
+);
+
 let totalMasuk = 0;
 let totalKeluar = 0;
 
@@ -148,8 +172,8 @@ doc.autoTable({
 
   head: [[
     "Tanggal",
+    "Kategori",
     "Keterangan",
-    "Catatan",
     "Pemasukan",
     "Pengeluaran"
   ]],
@@ -197,23 +221,35 @@ for (const trx of data) {
   const tanggal = formatTanggalIndonesia(parseTanggal(trx));
 
   // ================= HITUNG IMAGE SIZE DULU =================
-  const imgBase64 = await getImageBase64(fileId);
-  const size = await getImageSize(imgBase64);
 
-  const maxWidth = 80;
-  const ratio = size.height / size.width;
+  const cache = imageCache[fileId];
 
-  let imgWidth = maxWidth;
-  let imgHeight = maxWidth * ratio;
+  if (!cache) continue;
 
-  if (imgHeight > 120) {
-    imgHeight = 120;
-    imgWidth = imgHeight / ratio;
+  const imgBase64 = cache.base64;
+  const size = cache.size;
+
+  const boxWidth = 80;
+  const boxHeight = 80;
+
+  const ratio = size.width / size.height;
+
+  let imgWidth;
+  let imgHeight;
+
+  if (ratio > 1) {
+    // landscape
+    imgWidth = boxWidth;
+    imgHeight = boxWidth / ratio;
+  } else {
+    // portrait
+    imgHeight = boxHeight;
+    imgWidth = boxHeight * ratio;
   }
 
   // ================= HITUNG TOTAL HEIGHT BLOK =================
   const textHeight = 18; // estimasi teks (no + catatan)
-  const blockHeight = textHeight + imgHeight + 20;
+  const blockHeight = textHeight + boxHeight + 20;
 
   // ================= PAGE BREAK SEBELUM GAMBAR =================
   if (y + blockHeight > pageHeight - 20) {

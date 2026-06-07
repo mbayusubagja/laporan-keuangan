@@ -337,20 +337,48 @@ async function hapusTransaksi(id){
   }
 }
 
+// ================== show toast transaksi ==================
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    const pesan =
+      sessionStorage.getItem(
+        "toastMessage"
+      );
+
+    if (pesan) {
+
+      showToast(pesan);
+
+      sessionStorage.removeItem(
+        "toastMessage"
+      );
+
+    }
+
+  }
+);
+
 // ================= LOAD =================
 
 loadDashboard();
 
-window.addEventListener("pageshow", () => {
-  loadDashboard();
-});
-
-document.addEventListener("visibilitychange", () => {
-
-  if(!document.hidden){
-
+window.addEventListener(
+  "pageshow",
+  () => {
     loadDashboard();
+  }
+);
+
+document.addEventListener(
+  "visibilitychange",
+  () => {
+
+    if (!document.hidden) {
+      loadDashboard();
+    }
 
   }
-
-});
+);
