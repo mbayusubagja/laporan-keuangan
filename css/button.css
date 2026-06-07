@@ -521,6 +521,18 @@ body.modalOpen{
   cursor: zoom-out;
 }
 
+.closePreviewBtn{
+  position:absolute;
+  top:20px;
+  right:20px;
+  width:40px;
+  height:40px;
+  border:none;
+  border-radius:50%;
+  font-size:20px;
+  cursor:pointer;
+}
+
 /* animasi background */
 @keyframes fadeIn{
   from { opacity: 0; }
