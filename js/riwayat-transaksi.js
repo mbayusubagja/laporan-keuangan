@@ -558,8 +558,11 @@ document.addEventListener("click", function(e){
     overlay.style.display = "flex";
   }
 
-  if(e.target.id === "imagePreviewOverlay"){
-    e.target.style.display = "none";
+  if(
+    e.target.id === "imagePreviewOverlay" ||
+    e.target.id === "closePreviewBtn"
+  ){
+    document.getElementById("imagePreviewOverlay").style.display = "none";
   }
 
 });
