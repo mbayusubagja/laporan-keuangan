@@ -537,8 +537,6 @@ body.modalOpen{
 
   cursor:pointer;
   z-index:100000;
-
-  backdrop-filter: blur(4px);
 }
 
 .closePreviewBtn:hover{
