@@ -525,18 +525,28 @@ body.modalOpen{
   position:absolute;
   top:20px;
   right:20px;
+
   width:40px;
   height:40px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
   border:none;
   border-radius:50%;
 
-  background:none;
+  background:rgba(255,255,255,0.2);
   color:white;
-  font-size:24px;
+
+  font-size:22px;
   font-weight:bold;
+  line-height:1;
 
   cursor:pointer;
   z-index:100000;
+
+  backdrop-filter: blur(4px);
 }
 
 .closePreviewBtn:hover{
