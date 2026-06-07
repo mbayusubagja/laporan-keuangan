@@ -19,8 +19,19 @@
   <div class="card">
 
     <label for="kategori">Kategori</label>
-    <input id="kategori" list="kategoriList" placeholder="Contoh : Gaji" autocomplete="off">
-    <datalist id="kategoriList"></datalist>
+    <div class="inputWrapper">
+
+      <input
+        type="text"
+        id="kategori"
+        autocomplete="off"
+        oninput="showKategori()"
+        placeholder="Contoh : Kas Operasional"
+      >
+
+      <div id="kategoriDropdown"></div>
+
+    </div>
 
     <label for="nominal">Nominal</label>
     <input id="nominal" type="text" inputmode="numeric" placeholder="0">

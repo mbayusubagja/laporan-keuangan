@@ -557,6 +557,135 @@ function blobToBase64(blob){
 
 }
 
+// ================== load kategori ==========================
+
+let semuaKategori = [];
+
+async function loadKategori(jenis){
+
+  const user = JSON.parse(
+    sessionStorage.getItem("user") ||
+    localStorage.getItem("user") ||
+    localStorage.getItem("activeUser")
+  );
+
+  try{
+
+    const url =
+      API +
+      "?mode=get_kategori&userId=" +
+      user.userId +
+      "&jenis=" +
+      jenis;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if(!Array.isArray(data)){
+      console.error("Response bukan array:", data);
+      return;
+    }
+
+    semuaKategori = data.filter(k => k);
+
+  }catch(err){
+    console.error("loadKategori error:", err);
+  }
+}
+
+// ================== click diluar kategori =================
+
+document.addEventListener("click", (e) => {
+
+  const wrapper =
+    document.querySelector(".inputWrapper");
+
+  const dropdown =
+    document.getElementById(
+      "kategoriDropdown"
+    );
+
+  if(!wrapper.contains(e.target)){
+
+    dropdown.style.display =
+      "none";
+
+  }
+
+});
+
+// ================== show kategori dropdown ==================
+
+function showKategori(){
+
+  const input =
+    document.getElementById("kategori");
+
+  const dropdown =
+    document.getElementById(
+      "kategoriDropdown"
+    );
+
+  const keyword =
+    input.value.toLowerCase().trim();
+
+  if(!keyword){
+
+    dropdown.innerHTML = "";
+    dropdown.style.display = "none";
+
+    return;
+  }
+
+  dropdown.innerHTML = "";
+
+  if(!keyword){
+    dropdown.style.display = "none";
+    return;
+  }
+
+  const hasil = semuaKategori
+    .filter(k =>
+      k.toLowerCase().includes(keyword)
+    )
+    .slice(0, 5);
+
+  if(hasil.length === 0){
+    dropdown.style.display = "none";
+    return;
+  }
+
+  hasil.forEach(kategori => {
+
+    const item =
+      document.createElement("div");
+
+    item.className =
+      "kategori-item";
+
+    item.textContent =
+      kategori;
+
+    item.onclick = () => {
+
+      input.value =
+        kategori;
+
+      dropdown.innerHTML =
+        "";
+
+      dropdown.style.display =
+        "none";
+    };
+
+    dropdown.appendChild(item);
+
+  });
+
+  dropdown.style.display =
+    "block";
+}
+
 // ================= RESET FORM =================
 function resetForm(){
   document.getElementById("kategori").value = "";
@@ -566,3 +695,7 @@ function resetForm(){
   uploadedImageUrl = "";
   uploadedFileId = "";
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadKategori("keluar");
+});

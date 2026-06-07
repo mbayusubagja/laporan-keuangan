@@ -267,6 +267,10 @@ async function loadRiwayat(){
           hasil.bulan[key]
         );
 
+        renderKategori(
+          hasil.bulan[key]
+        );
+
       };
 
       listBulan.appendChild(card);
@@ -738,6 +742,124 @@ async function handleDownloadPDF(btn, key) {
     btn.disabled = false;
     btn.innerHTML = oldText;
   }
+}
+
+// ===================== RENDER KATEGORI =======================
+
+// ================= RENDER KATEGORI =================
+function renderKategori(data){
+
+  const list =
+    document.getElementById(
+      "listKategori"
+    );
+
+  list.innerHTML = "";
+
+  const kategoriMap = {};
+
+  data.forEach(trx => {
+
+    const kategoriAsli =
+      trx.kategori || "Lainnya";
+
+    const kategoriKey =
+      kategoriAsli
+        .trim()
+        .toLowerCase();
+
+    if(!kategoriMap[kategoriKey]){
+
+      kategoriMap[kategoriKey] = {
+
+        nama:
+          kategoriAsli
+            .toLowerCase()
+            .split(" ")
+            .map(kata =>
+              kata.charAt(0)
+                .toUpperCase() +
+              kata.slice(1)
+            )
+            .join(" "),
+
+        jenis: trx.jenis,
+
+        total: 0,
+
+        transaksi: []
+      };
+    }
+
+    kategoriMap[kategoriKey].total +=
+      Number(trx.nominal);
+
+    kategoriMap[kategoriKey]
+      .transaksi
+      .push(trx);
+
+  });
+
+  Object.keys(kategoriMap)
+
+    .sort((a,b) =>
+
+      kategoriMap[b].total -
+      kategoriMap[a].total
+
+    )
+
+  .forEach(key => {
+
+    const kategori =
+      kategoriMap[key];
+
+    let warna = "#222";
+    let icon = "⚪";
+
+    if(kategori.jenis === "masuk"){
+
+      warna = "#22c55e";
+      icon = "⬆️";
+
+    }else if(kategori.jenis === "keluar"){
+
+      warna = "#ef4444";
+      icon = "⬇️";
+
+    }
+
+    const card =
+      document.createElement("div");
+
+    card.className = "card";
+
+    card.innerHTML = `
+
+      <strong>
+        ${icon}
+        ${kategori.nama}
+      </strong>
+
+      <div
+        style="
+          color:${warna};
+          font-weight:bold;
+        "
+      >
+        <br>
+        ${formatRupiah(
+          kategori.total
+        )}
+
+      </div>
+
+    `;
+
+    list.appendChild(card);
+
+  });
+
 }
 
 // ================= LOAD =================

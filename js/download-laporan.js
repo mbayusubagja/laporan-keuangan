@@ -17,6 +17,17 @@ function toDriveDirectUrl(input) {
   return match[0]; // hanya fileId
 }
 
+// ================= huruf kapital ========================
+function capitalizeWords(teks) {
+  return teks
+    .split(" ")
+    .map(kata =>
+      kata.charAt(0).toUpperCase() +
+      kata.slice(1).toLowerCase()
+    )
+    .join(" ");
+}
+
 // ================= helper ukuran image ====================
 
 function getImageSize(base64) {
@@ -105,16 +116,11 @@ const saldo = totalMasuk - totalKeluar;
 const { jsPDF } = window.jspdf;
 const doc = new jsPDF();
 
-
-// ================= HEADER =================
-doc.setFontSize(18);
-doc.text("Laporan Keuangan", 105, 15, { align: "center" });
-
 const info = getMonthInfo(bulanKey);
 
 // HEADER
 doc.setFontSize(18);
-doc.text("Laporan Keuangan", 105, 15, { align: "center" });
+doc.text("LAPORAN KEUANGAN", 105, 15, { align: "center" });
 
 doc.setFontSize(13);
 doc.text(
@@ -146,6 +152,7 @@ doc.text(": " + formatRupiah(saldo), 55, 66);
 
 
 // ================= TABLE =================
+let no = 1;
 const rows = data
 .sort((a, b) => parseTanggal(a) - parseTanggal(b))
 .map(trx => {
@@ -159,9 +166,10 @@ const rows = data
     : "";
 
   return [
+    no++,
     formatTanggalIndonesia(parseTanggal(trx)),
-    trx.kategori,
-    trx.catatan,
+    capitalizeWords(trx.kategori),
+    capitalizeWords(trx.catatan),
     pemasukan,
     pengeluaran
   ];
@@ -171,6 +179,7 @@ doc.autoTable({
   startY: 80,
 
   head: [[
+    "No",
     "Tanggal",
     "Kategori",
     "Keterangan",
@@ -200,6 +209,68 @@ doc.autoTable({
 });
 
 
+// ================= TANDA TANGAN =================
+
+const profilRes = await fetch(
+  API +
+  "?mode=getProfil&id_user=" +
+  user.userId
+);
+
+const profil = await profilRes.json();
+
+const namaUser =
+  profil.data.nama || "-";
+
+const jabatanUser =
+  profil.data.jabatan || "-";
+
+const akhirTabel =
+  doc.lastAutoTable.finalY;
+
+const yTtd =
+  akhirTabel + 20;
+
+const xTtd = 140;
+
+// tanggal hari ini
+const tanggalCetak =
+  new Date().toLocaleDateString(
+    "id-ID",
+    {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    }
+  );
+
+doc.setFontSize(10);
+
+doc.text(
+  tanggalCetak,
+  xTtd,
+  yTtd
+);
+
+doc.text(
+  "Mengetahui,",
+  xTtd,
+  yTtd + 8
+);
+
+doc.text(
+  jabatanUser,
+  xTtd,
+  yTtd + 14
+);
+
+doc.text(
+  namaUser,
+  xTtd,
+  yTtd + 38
+);
+
+
 // ================= LAMPIRAN =================
 doc.addPage();
 
@@ -207,7 +278,7 @@ doc.setFontSize(18);
 doc.text("Lampiran Transaksi", 105, 15, { align: "center" });
 
 let y = 25;
-let no = 1;
+let num = 1;
 
 const pageHeight = doc.internal.pageSize.getHeight();
 
@@ -261,7 +332,7 @@ for (const trx of data) {
   doc.setFontSize(11);
 
   doc.text(
-    `${no}. ${trx.kategori || "-"} - ${tanggal}`,
+    `${num}. ${capitalizeWords(trx.kategori) || "-"} - ${tanggal}`,
     14,
     y
   );
@@ -269,7 +340,7 @@ for (const trx of data) {
   y += 6;
 
   doc.text(
-    `Catatan: ${trx.catatan || "-"}`,
+    `Catatan: ${capitalizeWords(trx.catatan) || "-"}`,
     14,
     y
   );
@@ -287,7 +358,7 @@ for (const trx of data) {
   doc.line(14, y, 195, y);
   y += 8;
 
-  no++;
+  num++;
 }
 
 doc.save(`Laporan-${bulanKey}.pdf`);

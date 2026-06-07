@@ -10,9 +10,6 @@ if(!user){
   throw new Error("Belum login");
 }
 
-document.getElementById("userInfo")
-.innerText = user.noHp;
-
 function formatRupiah(angka){
 
   return Number(angka)
@@ -33,6 +30,10 @@ function lihatLaporan(){
 
 function lihatRiwayatTransaksi(){
   window.location.href = "riwayat-transaksi.html";
+}
+
+function aturProfil(){
+  window.location.href = "user-profil.html";
 }
 
 // ================== parse tanggal ===============
@@ -340,25 +341,32 @@ async function hapusTransaksi(id){
 // ================== show toast transaksi ==================
 
 document.addEventListener(
-  "DOMContentLoaded",
-  () => {
+"DOMContentLoaded",
+async () => {
 
-    const pesan =
-      sessionStorage.getItem(
-        "toastMessage"
-      );
+  // ================= TOAST =================
+  const pesan =
+    sessionStorage.getItem("toastMessage");
 
-    if (pesan) {
-
-      showToast(pesan);
-
-      sessionStorage.removeItem(
-        "toastMessage"
-      );
-
-    }
-
+  if (pesan) {
+    showToast(pesan);
+    sessionStorage.removeItem("toastMessage");
   }
+
+  if (user) {
+    const res = await fetch(
+      API + "?mode=getProfil&id_user=" + user.userId
+    );
+
+    const r = await res.json();
+
+    if (r.ok) {
+      document.getElementById("userInfo").innerText =
+        r.data.nama || user.noHp;
+    }
+  }
+
+}
 );
 
 // ================= LOAD =================

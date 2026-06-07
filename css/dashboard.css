@@ -207,6 +207,15 @@
   font-size:11px;
   color:white;
   font-weight:500;
+  flex-direction: column;
+  align-items: flex-end; /* biar tetap ke kanan */
+
+}
+
+.switchRow{
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .switch{
@@ -257,4 +266,20 @@
     flex-direction:column;
   }
 
+}
+
+/* ==================== btn profile ====================== */
+
+.btnProfile{
+  font-size: 12px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 8px;
+  background: #444444;
+  color: white;
+  cursor: pointer;
+}
+
+.btnProfile:hover{
+  background: #666666;
 }

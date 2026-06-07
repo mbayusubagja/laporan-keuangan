@@ -507,20 +507,6 @@ body.modalOpen{
   animation: fadeIn .2s ease;
 }
 
-/* gambar preview */
-#imagePreviewFull{
-  max-width: 92%;
-  max-height: 92%;
-  border-radius: 12px;
-
-  /* biar enak dilihat */
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-
-  /* efek masuk */
-  animation: zoomIn .2s ease;
-  cursor: zoom-out;
-}
-
 .closePreviewBtn{
   position:absolute;
   top:20px;
@@ -553,6 +539,20 @@ body.modalOpen{
   background:rgba(255,255,255,0.3);
 }
 
+/* gambar preview */
+#imagePreviewFull{
+  max-width: 92%;
+  max-height: 92%;
+  border-radius: 12px;
+
+  /* biar enak dilihat */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+
+  /* efek masuk */
+  animation: zoomIn .2s ease;
+  cursor: zoom-out;
+}
+
 /* animasi background */
 @keyframes fadeIn{
   from { opacity: 0; }
@@ -563,4 +563,84 @@ body.modalOpen{
 @keyframes zoomIn{
   from { transform: scale(0.85); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
+}
+
+/* ================= kategori ================= */
+.inputWrapper{
+  position:relative;
+}
+
+#kategoriDropdown{
+  position:absolute;
+  top:calc(100% + 2px); /* hanya 2px jarak */
+  left:0;
+  right:0;
+
+  background:#fff;
+  border:1px solid #ddd;
+
+  max-height:200px;
+  overflow-y:auto;
+
+  display:none;
+  z-index:1000;
+  margin-top:-15px;
+
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+  overflow:hidden;
+}
+
+.kategori-item{
+  padding:12px 14px;
+  cursor:pointer;
+  border-bottom:1px solid #eee;
+}
+
+.kategori-item:last-child{
+  border-bottom:none;
+}
+
+.kategori-item:hover{
+  background:#f5f5f5;
+}
+
+#listKategori .card{
+  border-radius: 0;
+} 
+
+/* ================ profil card ================== */
+
+.profil-card{
+  background:#fff;
+  border-radius:12px;
+  padding:16px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.profil-card .header h2{
+  margin:0;
+  font-size:20px;
+}
+
+.profil-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:5px 16px;
+  border-bottom:1px solid #eee;
+}
+
+.profil-item:last-child{
+  border-bottom:none;
+}
+
+.label{
+  color:#666;
+  font-weight:500;
+}
+
+.value{
+  font-weight:600;
+  text-align:right;
+  margin-left: 15px;
 }
