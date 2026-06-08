@@ -13,27 +13,107 @@
 
 <div class="container">
 
-<div class="card">
+    <div class="card">
 
-<h3>Login / Register</h3>
+        <h3>Login / Register</h3>
 
-<input id="noHp" placeholder="No HP (62xxx)">
-<input id="password" type="password" placeholder="Password">
+        <input id="noHp" placeholder="No HP (62xxx)">
+        <input id="password" type="password" placeholder="Password">
 
-<div class="toggle" onclick="togglePass()">👁 Lihat Password</div>
+        <div class="toggle" onclick="togglePass()">👁 Lihat Password</div>
 
-<p id="status"></p>
+        <p id="status"></p>
 
-<button id="loginBtn" onclick="login()">Login</button>
-<button id="registerBtn" onclick="register()">Register</button>
+        <button id="loginBtn" onclick="login()">Login</button>
+        <button id="registerBtn" onclick="register()">Register</button>
 
-<a class="lupaPassword"
-href="https://wa.me/6281214741203?text=Assalamualaikum%2C%20saya%20lupa%20password%20akun%20saya."
-target="_blank">
-Lupa Password?
-</a>
+        <p>
+        <a href="#"
+            onclick="bukaModalLupaPassword()"
+            class="lupaPassword">
+            Lupa Password?
+        </a>
+        </p>
 
-</div>
+    </div>
+
+    <div id="modalLupaPassword" class="modal">
+
+    <div class="modal-content">
+
+        <span
+        class="close"
+        onclick="tutupModalLupaPassword()"
+        >&times;</span>
+
+        <h3>Lupa Password</h3>
+
+        <!-- Step 1 -->
+        <div id="stepEmail">
+
+        <input
+            type="email"
+            id="gmailReset"
+            placeholder="Masukkan Gmail"
+        >
+
+        <button
+            onclick="kirimOtpReset()"
+        >
+            Kirim OTP
+        </button>
+
+        </div>
+
+        <!-- Step 2 -->
+        <div
+        id="stepOtp"
+        style="display:none;"
+        >
+
+        <input
+            type="text"
+            id="otpReset"
+            placeholder="Masukkan OTP"
+        >
+
+        <button
+            onclick="verifikasiOtpReset()"
+        >
+            Verifikasi OTP
+        </button>
+
+        </div>
+
+        <!-- Step 3 -->
+        <div
+        id="stepPassword"
+        style="display:none;"
+        >
+
+        <input
+            type="password"
+            id="passwordBaru"
+            placeholder="Password Baru"
+        >
+        <div
+        class="toggle"
+        onclick="togglePasswordBaru()"
+        >
+        👁 Lihat Password
+        </div>
+
+        <button
+            onclick="simpanPasswordBaru()"
+        >
+            Simpan Password
+        </button>
+
+        </div>
+
+    </div>
+
+    </div>
 
 </div>
 

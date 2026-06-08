@@ -242,7 +242,11 @@ async function register(){
 
     if(!hasil.ok){
 
-      status("❌ " + hasil.message || "❌ Register gagal");
+      status(
+        hasil.message
+        ? "❌ " + hasil.message
+        : "❌ Login gagal"
+      );
 
       // 🔥 enable lagi kalau gagal
       registerBtn.disabled = false;
@@ -281,4 +285,232 @@ function status(teks){
 
   document.getElementById("status")
     .innerText = teks;
+}
+
+// =============================== LUPA PASS ===================================
+function bukaModalLupaPassword(){
+
+  document.getElementById(
+    "modalLupaPassword"
+  ).style.display = "block";
+
+}
+
+function tutupModalLupaPassword(){
+
+  document.getElementById(
+    "modalLupaPassword"
+  ).style.display = "none";
+
+  document.getElementById(
+    "stepOtp"
+  ).style.display = "none";
+
+  document.getElementById(
+    "stepPassword"
+  ).style.display = "none";
+
+  document.getElementById(
+    "gmailReset"
+  ).value = "";
+
+  document.getElementById(
+    "otpReset"
+  ).value = "";
+
+  document.getElementById(
+    "passwordBaru"
+  ).value = "";
+
+}
+
+// ============================ kirim otp reset ========================
+
+async function kirimOtpReset(){
+
+  let gmail =
+    document.getElementById(
+      "gmailReset"
+    ).value;
+
+  gmail = String(gmail)
+    .trim()
+    .toLowerCase();
+  
+  if(!gmail){
+
+    alert("Masukkan Gmail");
+
+    return;
+
+  }
+
+  const res =
+    await fetch(API,{
+
+      method:"POST",
+
+      body:JSON.stringify({
+
+        mode:"kirimOtpReset",
+
+        gmail
+
+      })
+
+    });
+
+  const data =
+    await res.json();
+
+  alert(data.message);
+
+  if(data.success){
+
+    document.getElementById(
+      "stepOtp"
+    ).style.display =
+    "block";
+
+  }
+
+}
+
+// =========================== verifikasi otp reset =========================
+
+async function verifikasiOtpReset(){
+
+  let gmail =
+    document.getElementById(
+      "gmailReset"
+    ).value;
+
+  gmail = String(gmail)
+    .trim()
+    .toLowerCase();
+
+  const otp =
+    document.getElementById(
+      "otpReset"
+    ).value;
+
+  const res =
+    await fetch(API,{
+
+      method:"POST",
+
+      body:JSON.stringify({
+
+        mode:"verifikasiOtpReset",
+
+        gmail,
+
+        otp
+
+      })
+
+    });
+
+  const data =
+    await res.json();
+
+  if(data.ok){
+
+    document.getElementById(
+      "stepPassword"
+    ).style.display =
+    "block";
+
+  }else{
+
+    alert(data.msg);
+
+  }
+
+}
+
+// =================== simpan pass ==========================
+
+async function simpanPasswordBaru(){
+
+  let gmail =
+    document.getElementById(
+      "gmailReset"
+    ).value;
+
+  gmail = String(gmail)
+    .trim()
+    .toLowerCase();
+
+  const password =
+    document.getElementById(
+      "passwordBaru"
+    ).value;
+
+  if(password.length < 6){
+
+    alert(
+      "Password minimal 6 karakter"
+    );
+
+    return;
+  }
+
+  const res =
+    await fetch(API,{
+
+      method:"POST",
+
+      body:JSON.stringify({
+
+        mode:"resetPassword",
+
+        gmail,
+
+        password
+
+      })
+
+    });
+
+  const data =
+    await res.json();
+
+  alert(data.msg);
+
+  if(data.ok){
+
+    tutupModalLupaPassword();
+
+  }
+
+}
+
+// ================ toggle pass baru ====================
+function togglePasswordBaru(){
+
+  const p =
+    document.getElementById(
+      "passwordBaru"
+    );
+
+  const btn =
+    document.getElementById(
+      "togglePasswordBaru"
+    );
+
+  if(p.type === "password"){
+
+    p.type = "text";
+    btn.innerText =
+      "🙈 Sembunyikan Password";
+
+  }else{
+
+    p.type = "password";
+    btn.innerText =
+      "👁 Lihat Password";
+
+  }
+
 }

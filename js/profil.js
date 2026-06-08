@@ -20,6 +20,7 @@ btnSimpan.addEventListener("click", async function () {
 
   const nama = document.getElementById("nama").value.toUpperCase();
   const jabatan = document.getElementById("jabatan").value.toUpperCase();
+  const gmail = document.getElementById("gmail").value;
 
   const error = validasi();
 
@@ -56,7 +57,8 @@ btnSimpan.addEventListener("click", async function () {
     mode: "simpanProfil",
     id_user: user.userId,
     nama: nama,
-    jabatan: jabatan
+    jabatan: jabatan,
+    gmail: gmail
   };
 
   try {

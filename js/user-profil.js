@@ -39,6 +39,10 @@ async function getProfil(){
       ${n.jabatan}
     `;
 
+    gmailUser.innerHTML = `
+      ${n.gmail}
+    `;
+
   } catch(err){
     console.log(err);
   }
