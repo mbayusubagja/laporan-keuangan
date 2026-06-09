@@ -1,6 +1,6 @@
 {
-  "name": "Laporan Keuangan",
-  "short_name": "Keuangan",
+  "name": "Laporan Keuangan Operasional",
+  "short_name": "Laporan Keuangan",
   "start_url": "/login.html",
   "display": "standalone",
   "background_color": "#ffffff",
