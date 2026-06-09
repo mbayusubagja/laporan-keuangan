@@ -21,19 +21,13 @@
   <div class="card">
 
     <label for="kategori">Kategori</label>
-    <div class="inputWrapper">
-
-      <input
-        type="text"
-        id="kategori"
-        autocomplete="off"
-        oninput="showKategori()"
-        placeholder="Contoh : Transportasi"
-      >
-
-      <div id="kategoriDropdown"></div>
-
-    </div>
+    <select id="kategori">
+      <option value="">Pilih Kategori</option>
+      <option value="Transportasi">Transportasi</option>
+      <option value="Project">Project</option>
+      <option value="Konsumsi">Konsumsi</option>
+      <option value="Lainnya">Lainnya</option>
+    </select>
 
     <label for="nominal">Nominal</label>
 

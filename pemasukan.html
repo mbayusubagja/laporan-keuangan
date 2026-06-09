@@ -19,19 +19,11 @@
   <div class="card">
 
     <label for="kategori">Kategori</label>
-    <div class="inputWrapper">
-
-      <input
-        type="text"
-        id="kategori"
-        autocomplete="off"
-        oninput="showKategori()"
-        placeholder="Contoh : Kas Operasional"
-      >
-
-      <div id="kategoriDropdown"></div>
-
-    </div>
+    <select id="kategori">
+      <option value="">Pilih Kategori</option>
+      <option value="Top Up Kasbon OP">Top Up Kasbon OP</option>
+      <option value="Lainnya">Lainnya</option>
+    </select>
 
     <label for="nominal">Nominal</label>
     <input id="nominal" type="text" inputmode="numeric" placeholder="0">

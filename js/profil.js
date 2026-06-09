@@ -78,10 +78,11 @@ btnSimpan.addEventListener("click", async function () {
       return;
     }
 
-    status.innerHTML =
-      "✅ " + "<b>" + nama + "</b>" + ", profil Anda berhasil tersimpan.";
-    resetForm();
-    location.href = "user-profil.html";
+    showToast("Profil berhasil disimpan");
+
+    setTimeout(() => {
+      location.replace("dashboard.html");
+    }, 1000);
     
   } catch (err) {
     console.log(err);

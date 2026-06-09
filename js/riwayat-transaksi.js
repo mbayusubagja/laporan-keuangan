@@ -548,6 +548,8 @@ async function openModal(trx){
     </div>
   `;
 
+  document.body.style.overflow = 'hidden';
+
 }
 
 // =================== preview image ====================
@@ -590,6 +592,7 @@ function toDriveDirectUrl(input) {
 
 function closeModal(){
   document.getElementById("modalOverlay").style.display = "none";
+  document.body.style.overflow = '';
 }
 
 // klik luar modal untuk close

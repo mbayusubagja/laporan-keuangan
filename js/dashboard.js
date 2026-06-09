@@ -10,6 +10,8 @@ if(!user){
   throw new Error("Belum login");
 }
 
+
+
 function formatRupiah(angka){
 
   return Number(angka)
@@ -361,8 +363,26 @@ async () => {
     const r = await res.json();
 
     if (r.ok) {
+
+      const profil = r.data;
+
+      if (
+        !profil.nama ||
+        !profil.jabatan ||
+        !profil.gmail
+      ) {
+
+        showToast("Lengkapi profil terlebih dahulu");
+
+        setTimeout(() => {
+          location.href = "profil.html";
+        }, 1000);
+
+        return;
+      }
+
       document.getElementById("userInfo").innerText =
-        r.data.nama || user.noHp;
+        profil.nama || user.noHp;
     }
   }
 

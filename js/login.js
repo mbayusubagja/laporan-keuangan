@@ -219,6 +219,15 @@ async function register(){
   const noHp = document.getElementById("noHp").value.trim();
   const password = document.getElementById("password").value.trim();
 
+  if(password.length < 6){
+
+    alert(
+      "Password minimal 6 karakter"
+    );
+
+    return;
+  }
+
   status("Sedang register...");
 
   // 🔥 disable tombol
