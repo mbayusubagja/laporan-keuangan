@@ -193,12 +193,7 @@
   color:#fdd3d3;
 }
 
-.headerTop{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:8px;
-}
+
 
 .keepLoginBox{
   display:flex;
@@ -282,4 +277,43 @@
 
 .btnProfile:hover{
   background: #666666;
+}
+
+.headerTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.appTitle{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logoDashboard{
+  width:60px;
+  height:60px;
+  object-fit:contain;
+}
+
+.appTitle h2{
+  margin:0;
+  font-size:18px;
+}
+
+.appText{
+  display:flex;
+  flex-direction:column;
+  line-height:1.1;
+}
+
+.appText div:first-child{
+  font-size:16px;
+  font-weight:600;
+}
+
+.appText div:last-child{
+  font-size:14px;
 }

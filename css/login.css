@@ -66,3 +66,24 @@
   cursor:pointer;
   font-size:22px;
 }
+
+/*=================== logo login ================== */
+
+.header-login{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.logo-login{
+    width:60px;
+    height:60px;
+    object-fit:contain;
+}
+
+.nama-app{
+    margin:0;
+    font-size:20px;
+}

@@ -1,3 +1,93 @@
+// ================= helper datetime-local =================
+function formatDateTimeLocal(date){
+
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth()+1).padStart(2,"0");
+  const dd = String(date.getDate()).padStart(2,"0");
+  const hh = String(date.getHours()).padStart(2,"0");
+  const min = String(date.getMinutes()).padStart(2,"0");
+
+  return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+}
+
+// ======================== tanggal default hari ini ============================
+document.addEventListener("DOMContentLoaded", function(){
+
+  const trx =
+    JSON.parse(
+      sessionStorage.getItem("editTransaksi")
+      || "null"
+    );
+
+  const inputTanggal =
+    document.getElementById("tanggal");
+
+  // MODE EDIT
+  if(trx){
+
+  uploadedImageUrl = trx.url_image || "";
+  uploadedFileId = trx.fileId || "";
+
+  const preview =
+    document.getElementById("preview");
+
+    if(trx.fileId){
+
+      document.getElementById("preview").src =
+        "https://drive.google.com/thumbnail?id=" +
+        trx.fileId +
+        "&sz=w1000";
+
+    }
+
+    // kategori
+    const select =
+      document.getElementById("kategori");
+
+    const value =
+      String(trx.kategori)
+      .toLowerCase();
+
+    for(const opt of select.options){
+
+      if(
+        opt.value.toLowerCase() === value
+      ){
+        select.value = opt.value;
+        break;
+      }
+
+    }
+
+    document.getElementById("nominal").value =
+      "Rp " +
+      Number(trx.nominal)
+      .toLocaleString("id-ID");
+
+    document.getElementById("catatan").value =
+      trx.catatan || "";
+
+    // tanggal edit
+    inputTanggal.value =
+      formatDateTimeLocal(
+        new Date(
+          Number(trx.timestamp)
+        )
+      );
+
+    return;
+  }
+
+  // MODE TAMBAH BARU
+  inputTanggal.value =
+    formatDateTimeLocal(
+      new Date()
+    );
+
+});
+
+// =========================== upload image ==============================
+
 let uploadedImageUrl = "";
 let uploadedFileId = "";
 
@@ -29,6 +119,9 @@ async function simpanPengeluaran(){
   const status =
     document.getElementById("status");
 
+  const tanggalInput =
+    document.getElementById("tanggal").value;
+
   // ================= VALIDASI =================
 
   if(!kategori){
@@ -46,6 +139,18 @@ async function simpanPengeluaran(){
 
     showToast(
       "Nominal tidak valid"
+    );
+
+    return;
+  }
+
+  if(
+    !document.getElementById("file").files.length &&
+    !uploadedFileId
+  ){
+
+    showToast(
+      "File belum ada"
     );
 
     return;
@@ -70,12 +175,28 @@ async function simpanPengeluaran(){
 
     }
 
+    // ================ mode edit ========================
+
+    const trxEdit =
+      JSON.parse(
+        sessionStorage.getItem(
+          "editTransaksi"
+        ) || "null"
+      );
+
+    const mode =
+      trxEdit
+        ? "updateTransaksi"
+        : "tambah_pengeluaran";
+
     // ================= DATA =================
 
     const data = {
 
-      mode:
-        "tambah_pengeluaran",
+      mode,
+
+      id:
+        trxEdit?.id || "",
 
       id_user:
         user.userId,
@@ -91,6 +212,8 @@ async function simpanPengeluaran(){
 
       catatan:
         catatan,
+
+      tanggal: tanggalInput || null,
 
       url_image:
         uploadedImageUrl,

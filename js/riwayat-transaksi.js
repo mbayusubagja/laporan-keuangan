@@ -481,6 +481,8 @@ const imageCache = {};
 
 async function openModal(trx){
 
+  window.trxAktif = trx;
+
   document.getElementById("modalContent").innerHTML = `
     <div style="text-align:center;padding:20px;color:#666;">
       <div class="spinner"></div>
@@ -546,9 +548,48 @@ async function openModal(trx){
         ${imgHtml}
       </div>
     </div>
+
+    <div class="modalAction">
+
+      <button
+        class="btnEdit"
+        onclick="editTransaksi('${trx.id}','${trx.jenis}')"
+      >
+        ✏️ Edit
+      </button>
+
+      <button
+        class="btnHapus"
+        onclick="hapusTransaksiUI('${trx.id}')"
+      >
+        🗑️ Hapus
+      </button>
+
+    </div>
   `;
 
   document.body.style.overflow = 'hidden';
+
+}
+
+// =================== edit transaksi =====================
+
+function editTransaksi(id, jenis){
+
+  sessionStorage.setItem(
+    "editTransaksi",
+    JSON.stringify(window.trxAktif)
+  );
+
+  if(
+    String(jenis)
+      .trim()
+      .toLowerCase() === "masuk"
+  ){
+    location.href = "pemasukan.html";
+  }else{
+    location.href = "pengeluaran.html";
+  }
 
 }
 
@@ -862,6 +903,59 @@ function renderKategori(data){
     list.appendChild(card);
 
   });
+
+}
+
+// ================ hapus transaksi ==================
+async function hapusTransaksiUI(id){
+
+  const yakin = confirm(
+    "Yakin ingin menghapus transaksi ini?"
+  );
+
+  if(!yakin) return;
+
+  try{
+
+    const res = await fetch(API,{
+      method:"POST",
+      body:JSON.stringify({
+        mode:"hapusTransaksi",
+        id:id,
+        userId:user.userId
+      })
+    });
+
+    const hasil = await res.json();
+
+    if(hasil.ok){
+
+      closeModal();
+
+      showToast(
+        "Transaksi berhasil dihapus"
+      );
+
+      loadRiwayat();
+
+    }else{
+
+      showToast(
+        hasil.msg ||
+        "Gagal menghapus"
+      );
+
+    }
+
+  }catch(err){
+
+    console.error(err);
+
+    showToast(
+      "Terjadi kesalahan"
+    );
+
+  }
 
 }
 

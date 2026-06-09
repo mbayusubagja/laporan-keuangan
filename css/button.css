@@ -644,3 +644,34 @@ body.modalOpen{
   text-align:right;
   margin-left: 15px;
 }
+
+/* ==================== edit hapus riwayat transaksi ================== */
+
+.modalAction{
+  display:flex;
+  gap:10px;
+  margin-top:20px;
+}
+
+.btnEdit,
+.btnHapus{
+  flex:1;
+  border:none;
+  padding:12px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.btnEdit{
+  background:#3B82C4;
+  color:white;
+}
+
+.btnHapus{
+  background:#C75B5B;
+  color:white;
+}
+
+
+
