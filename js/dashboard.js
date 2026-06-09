@@ -202,17 +202,11 @@ async function loadDashboard(){
         <div class="transaksiHeader">
 
           <div>
-            <strong>${trx.kategori}</strong>
+            <strong>${trx.kategori.toUpperCase()}</strong>
 
               <div class="jenis">
-                ${
-                  trx.jenis === "masuk"
-                    ? `Transaksi masuk`
-
-                  : trx.jenis === "keluar"
-                    ? `Transaksi keluar`
-
-                  : trx.jenis
+                Keterangan : ${
+                  trx.catatan || "-"
                 }
               </div>
 
