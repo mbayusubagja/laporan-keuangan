@@ -538,7 +538,7 @@ async function openModal(trx){
     </div>
 
     <div class="modalRow">
-      <div class="modalLabel">Catatan</div>
+      <div class="modalLabel">Keterangan</div>
       <div class="modalValue">${trx.catatan || "-"}</div>
     </div>
 

@@ -661,6 +661,7 @@ body.modalOpen{
   border-radius:10px;
   font-weight:bold;
   cursor:pointer;
+  margin-top: 8px;
 }
 
 .btnEdit{
