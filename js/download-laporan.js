@@ -151,7 +151,7 @@ doc.setFontSize(10);
 doc.text(`Periode: ${info.start} - ${info.end}`, 14, 72);
 
 // ================= RINGKASAN =================
-doc.roundedRect(14, 78, 65, 30, 2, 2);
+doc.roundedRect(14, 78, 80, 30, 2, 2);
 
 doc.setFontSize(10);
 
@@ -183,10 +183,10 @@ const dataRows = rows; // data asli
 
 dataRows.push([
   {
-    content: "",
+    content: " ",
     colSpan: 6,
     styles: {
-      minCellHeight: 40,
+      minCellHeight: 0,
       lineWidth: 0,
       fillColor: false
     },
@@ -218,7 +218,7 @@ if (data.length === 0) {
 } else {
   doc.autoTable({
     startY: 118,
-    margin: { bottom: 60 }, // penting: kasih ruang TTD
+    margin: { bottom: 70 }, // penting: kasih ruang TTD
 
     head: [[
       "No",
@@ -248,7 +248,7 @@ if (data.length === 0) {
     didParseCell: function (data) {
       if (data.cell.raw?.dataKey === "__spacer") {
         data.cell.styles.lineWidth = 0;
-        data.cell.styles.fillColor = false;
+        data.cell.styles.fillColor = false; 
       }
     },
 

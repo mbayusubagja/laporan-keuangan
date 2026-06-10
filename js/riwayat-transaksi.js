@@ -1,3 +1,8 @@
+let activeBulan = null;
+let activeCard = null;
+let dataAktif = [];
+let tanggalAktif = null;
+
 const user = JSON.parse(
   sessionStorage.getItem("user") ||
   localStorage.getItem("user") ||
@@ -100,7 +105,14 @@ return new Date(Number(trx.timestamp || 0));
 
 async function loadRiwayat(){
 
+
   try{
+
+    // 🔥 FORCE CLEAR UI LAMA (WAJIB DI SINI)
+    document.getElementById("listTanggal").innerHTML = "";
+    document.getElementById("listKategori").innerHTML = "";
+    document.getElementById("cardListTanggal").style.display = "none";
+    document.getElementById("menuLaporan").style.display = "none";
 
     const res =
       await fetch(
@@ -390,8 +402,6 @@ function renderTanggal(data){
 // ================= RENDER TRANSAKSI =================
 
 let limitTransaksi = 5;
-let dataAktif = [];
-let tanggalAktif = null;
 
 function renderTransaksi(data, tanggal){
 
@@ -946,7 +956,7 @@ async function hapusTransaksiUI(id){
         "Transaksi berhasil dihapus"
       );
 
-      loadRiwayat();
+      await loadRiwayat();
 
     }else{
 
