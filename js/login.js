@@ -107,7 +107,8 @@ async function login(){
     ) {
 
       status(
-        "❌ Masih ada akun lain yang aktif di browser ini. Logout terlebih dahulu <b>dengan menonaktifkan Always Login</b> di akun yang lain."
+        `❌ Masih ada akun lain yang aktif di browser ini.
+        Logout terlebih dahulu akun tersebut <b>dengan menonaktifkan Always Login.</b>`
       );
 
       loginBtn.disabled = false;
@@ -141,7 +142,8 @@ async function login(){
     ) {
 
       status(
-        "❌ Masih ada akun lain yang aktif di browser ini. Logout terlebih dahulu <b>dengan menonaktifkan Always Login</b> di akun yang lain."
+        `❌ Masih ada akun lain yang aktif di browser ini.
+        Logout terlebih dahulu akun tersebut <b>dengan menonaktifkan Always Login.</b>`
       );
 
       loginBtn.disabled = false;
@@ -293,7 +295,7 @@ async function register(){
 function status(teks){
 
   document.getElementById("status")
-    .innerText = teks;
+    .innerHTML = teks;
 }
 
 // =============================== LUPA PASS ===================================

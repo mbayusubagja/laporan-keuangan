@@ -125,29 +125,39 @@ async function loadRiwayat(){
     let activeBulan = null;
     let activeCard = null;
 
-    Object.keys(hasil.bulan)
+    const bulanKeys =
+      Object.keys(hasil.bulan || {});
+
+    if (bulanKeys.length === 0) {
+
+      listBulan.innerHTML = `
+        
+          <p>Belum ada transaksi</p>
+        
+      `;
+
+      return;
+    }
+
+    bulanKeys
       .reverse()
       .forEach(key => {
 
-      const card =
-        document.createElement("div");
+        const card =
+          document.createElement("div");
 
-      card.className =
-        "card";
+        card.className =
+          "card";
 
-      card.style.cursor =
-        "pointer";
+        card.style.cursor =
+          "pointer";
 
-      card.style.marginBottom =
-        "10px";
+        card.style.marginBottom =
+          "10px";
 
-      card.innerHTML = `
-
-        <strong>
-          ${namaBulan(key)}
-        </strong>
-
-      `;
+        card.innerHTML = `
+          <strong>${namaBulan(key)}</strong>
+        `;
 
     
 

@@ -17,6 +17,18 @@ function toDriveDirectUrl(input) {
   return match[0]; // hanya fileId
 }
 
+// =============== format tgl cetak ===============================
+
+function formatTanggalCetak(date = new Date()) {
+  const hari = date.getDate();
+  const bulan = date.toLocaleString("id-ID", { month: "long" });
+  const tahun = date.getFullYear();
+
+  return `${hari} ${bulan.charAt(0).toUpperCase() + bulan.slice(1)} ${tahun}`;
+}
+
+const tanggalCetak = formatTanggalCetak();
+
 // ================= huruf kapital ========================
 function capitalizeWords(teks) {
   return teks
@@ -68,6 +80,9 @@ function getMonthInfo(bulanKey) {
 // =================== download pdf =================================
 async function downloadLaporanPDF(bulanKey){
 
+const { jsPDF } = window.jspdf;
+const doc = new jsPDF();
+
 const res = await fetch(
   API + "?mode=riwayat&userId=" + user.userId
 );
@@ -77,6 +92,10 @@ const hasil = await res.json();
 const data = hasil.bulan[bulanKey] || [];
 
 const imageCache = {};
+
+
+const pageHeight = doc.internal.pageSize.getHeight();
+const pageWidth = doc.internal.pageSize.getWidth();
 
 await Promise.all(
 
@@ -113,174 +132,152 @@ data.forEach(trx => {
 
 const saldo = totalMasuk - totalKeluar;
 
-const { jsPDF } = window.jspdf;
-const doc = new jsPDF();
-
 const info = getMonthInfo(bulanKey);
 
-// HEADER
+const logo = document.getElementById("logoPdf");
+
+if (logo && logo.complete) {
+  doc.addImage(logo, "PNG", 85, 5, 40, 40);
+}
+
+// HEADER (turun karena ada logo)
 doc.setFontSize(18);
-doc.text("LAPORAN KEUANGAN", 105, 15, { align: "center" });
+doc.text("LAPORAN KEUANGAN", 105, 52, { align: "center" });
 
-doc.setFontSize(13);
-doc.text(
-  `Bulan ${info.nama} ${info.tahun}`,
-  105,
-  23,
-  { align: "center" }
-);
+doc.setFontSize(12);
+doc.text(`Bulan ${info.nama} ${info.tahun}`, 105, 60, { align: "center" });
 
-// PERIODE
 doc.setFontSize(10);
-doc.text(
-  `Periode : ${info.start} - ${info.end}`,
-  14,
-  35
-);
+doc.text(`Periode: ${info.start} - ${info.end}`, 14, 72);
 
 // ================= RINGKASAN =================
-doc.setFontSize(11);
+doc.roundedRect(14, 78, 65, 30, 2, 2);
 
-doc.text("Total Pemasukan", 14, 50);
-doc.text(": " + formatRupiah(totalMasuk), 55, 50);
+doc.setFontSize(10);
 
-doc.text("Total Pengeluaran", 14, 58);
-doc.text(": " + formatRupiah(totalKeluar), 55, 58);
+doc.text("Pemasukan", 18, 86);
+doc.text(`: ${formatRupiah(totalMasuk)}`, 55, 86);
 
-doc.text("Saldo", 14, 66);
-doc.text(": " + formatRupiah(saldo), 55, 66);
+doc.text("Pengeluaran", 18, 94);
+doc.text(`: ${formatRupiah(totalKeluar)}`, 55, 94);
+
+doc.text("Saldo", 18, 102);
+doc.text(`: ${formatRupiah(saldo)}`, 55, 102);
 
 
 // ================= TABLE =================
+
 let no = 1;
 const rows = data
-.sort((a, b) => parseTanggal(a) - parseTanggal(b))
-.map(trx => {
-
-  const pemasukan = trx.jenis === "masuk"
-    ? formatRupiah(trx.nominal)
-    : "";
-
-  const pengeluaran = trx.jenis === "keluar"
-    ? formatRupiah(trx.nominal)
-    : "";
-
-  return [
-    no++,
+  .sort((a, b) => parseTanggal(a) - parseTanggal(b))
+  .map((trx, i) => [
+    i + 1,
     formatTanggalIndonesia(parseTanggal(trx)),
     capitalizeWords(trx.kategori),
     capitalizeWords(trx.catatan),
-    pemasukan,
-    pengeluaran
-  ];
-});
+    trx.jenis === "masuk" ? formatRupiah(trx.nominal) : "",
+    trx.jenis === "keluar" ? formatRupiah(trx.nominal) : ""
+  ]);
 
-doc.autoTable({
-  startY: 80,
+const dataRows = rows; // data asli
 
-  head: [[
-    "No",
-    "Tanggal",
-    "Kategori",
-    "Keterangan",
-    "Pemasukan",
-    "Pengeluaran"
-  ]],
-
-  body: rows,
-
-  theme: "grid",
-
-  styles: {
-    fontSize: 9,
-    halign: "center",
-    lineWidth: 0.2
-  },
-
-  columnStyles: {
-    3: { halign: "center" },
-    4: { halign: "center" }
-  },
-
-  headStyles: {
-    fillColor: [45, 137, 239],
-    textColor: 255
+dataRows.push([
+  {
+    content: "",
+    colSpan: 6,
+    styles: {
+      minCellHeight: 40,
+      lineWidth: 0,
+      fillColor: false
+    },
+    dataKey: "__spacer"
   }
-});
+]);
+
+const ttdIndex = dataRows.length - 1;
 
 
-// ================= TANDA TANGAN =================
+const ttdRowIndex = rows.findIndex(r => r[0]?.content === "TTD");
+
+let jabatanUser = "-";
+let namaUser = "-";
 
 const profilRes = await fetch(
-  API +
-  "?mode=getProfil&id_user=" +
-  user.userId
+  API + "?mode=getProfil&id_user=" + user.userId
 );
 
 const profil = await profilRes.json();
 
-const namaUser =
-  profil.data.nama || "-";
+namaUser = profil.data.nama || "-";
+jabatanUser = profil.data.jabatan || "-";
 
-const jabatanUser =
-  profil.data.jabatan || "-";
+let isLastPage = false;
 
-const akhirTabel =
-  doc.lastAutoTable.finalY;
+if (data.length === 0) {
+  doc.text("Tidak ada transaksi", 14, 120);
+} else {
+  doc.autoTable({
+    startY: 118,
+    margin: { bottom: 60 }, // penting: kasih ruang TTD
 
-const yTtd =
-  akhirTabel + 20;
+    head: [[
+      "No",
+      "Tanggal",
+      "Kategori",
+      "Keterangan",
+      "Masuk",
+      "Keluar"
+    ]],
 
-const xTtd = 140;
+    body: rows,
 
-// tanggal hari ini
-const tanggalCetak =
-  new Date().toLocaleDateString(
-    "id-ID",
-    {
-      day: "numeric",
-      month: "long",
-      year: "numeric"
+    theme: "grid",
+
+    styles: {
+      fontSize: 9
+    },
+
+    didParseCell: function (data) {
+      if (data.cell.raw?.dataKey === "__spacer") {
+        data.cell.styles.lineWidth = 0;
+        data.cell.styles.fillColor = false;
+      }
+    },
+
+    didDrawCell: function (data) {
+      if (data.row.index !== ttdIndex) return;
+      if (data.column.index !== 0) return;
+
+      const doc = data.doc;
+
+      const pageWidth = doc.internal.pageSize.getWidth();
+
+      const x = pageWidth - 70; // kanan
+      const y = data.cell.y + 8;
+
+      doc.setFontSize(10);
+      doc.text(`Jakarta, ${formatTanggalCetak()}`, x, y);
+      doc.text("Disusun oleh,", x, y + 8);
+      doc.text(jabatanUser, x, y + 16);
+      doc.text(namaUser, x, y + 45);
     }
-  );
+  });
+}
 
-doc.setFontSize(10);
 
-doc.text(
-  tanggalCetak,
-  xTtd,
-  yTtd
-);
-
-doc.text(
-  "Mengetahui,",
-  xTtd,
-  yTtd + 8
-);
-
-doc.text(
-  jabatanUser,
-  xTtd,
-  yTtd + 14
-);
-
-doc.text(
-  namaUser,
-  xTtd,
-  yTtd + 38
-);
 
 
 // ================= LAMPIRAN =================
 doc.addPage();
 
-doc.setFontSize(18);
-doc.text("Lampiran Transaksi", 105, 15, { align: "center" });
+doc.setFontSize(16);
+doc.text("LAMPIRAN BUKTI TRANSAKSI", 105, 15, { align: "center" });
 
-let y = 25;
+doc.setFontSize(9);
+doc.text(`Periode ${info.nama} ${info.tahun}`, 105, 22, { align: "center" });
+
+let y = 30;
 let num = 1;
-
-const pageHeight = doc.internal.pageSize.getHeight();
 
 for (const trx of data) {
 
@@ -359,6 +356,20 @@ for (const trx of data) {
   y += 8;
 
   num++;
+}
+
+const totalPages = doc.getNumberOfPages();
+
+for (let i = 1; i <= totalPages; i++) {
+  doc.setPage(i);
+  doc.setFontSize(8);
+
+  doc.text(
+    `Halaman ${i} dari ${totalPages}`,
+    pageWidth / 2,
+    pageHeight - 10,
+    { align: "center" }
+  );
 }
 
 doc.save(`Laporan-${bulanKey}.pdf`);
