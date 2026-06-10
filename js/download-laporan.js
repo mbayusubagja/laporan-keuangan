@@ -142,7 +142,7 @@ if (logo && logo.complete) {
 
 // HEADER (turun karena ada logo)
 doc.setFontSize(18);
-doc.text("LAPORAN KEUANGAN", 105, 52, { align: "center" });
+doc.text("LAPORAN KEUANGAN OPERASIONAL", 105, 52, { align: "center" });
 
 doc.setFontSize(12);
 doc.text(`Bulan ${info.nama} ${info.tahun}`, 105, 60, { align: "center" });
@@ -235,6 +235,14 @@ if (data.length === 0) {
 
     styles: {
       fontSize: 9
+    },
+
+    headStyles: {
+      fillColor: [220, 220, 220], // abu muda
+      textColor: 0,               // hitam
+      fontStyle: "bold",
+      lineWidth: 0.2,
+      halign: "center"              // bikin garis header lebih tegas
     },
 
     didParseCell: function (data) {
