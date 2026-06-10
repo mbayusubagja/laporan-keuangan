@@ -111,6 +111,9 @@ if(rememberLogin){
 
 async function loadDashboard(){
 
+    sessionStorage.removeItem("editTransaksi");
+
+
   try{
 
     const res = await fetch(
