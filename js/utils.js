@@ -65,3 +65,7 @@ function toggleMenu() {
 function clearEditMode(){
   sessionStorage.removeItem("editTransaksi");
 }
+
+window.addEventListener("popstate", () => {
+  clearEditMode();
+});
