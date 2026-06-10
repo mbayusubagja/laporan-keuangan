@@ -17,6 +17,38 @@ function toDriveDirectUrl(input) {
   return match[0]; // hanya fileId
 }
 
+// ==================== helper chunk pecah list tabel =================
+function chunkArray(arr, size) {
+  const result = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+}
+
+// ========================= smart chunk =============================
+
+function smartChunk(rows) {
+  const result = [];
+
+  let firstPageSize = 13;
+  let otherPageSize = 28;
+
+  let i = 0;
+
+  // halaman 1
+  result.push(rows.slice(i, i + firstPageSize));
+  i += firstPageSize;
+
+  // halaman berikutnya
+  while (i < rows.length) {
+    result.push(rows.slice(i, i + otherPageSize));
+    i += otherPageSize;
+  }
+
+  return result;
+}
+
 // =============== format tgl cetak ===============================
 
 function formatTanggalCetak(date = new Date()) {
@@ -179,25 +211,6 @@ const rows = data
     trx.jenis === "keluar" ? formatRupiah(trx.nominal) : ""
   ]);
 
-const dataRows = rows; // data asli
-
-dataRows.push([
-  {
-    content: " ",
-    colSpan: 6,
-    styles: {
-      minCellHeight: 0,
-      lineWidth: 0,
-      fillColor: false
-    },
-    dataKey: "__spacer"
-  }
-]);
-
-const ttdIndex = dataRows.length - 1;
-
-
-const ttdRowIndex = rows.findIndex(r => r[0]?.content === "TTD");
 
 let jabatanUser = "-";
 let namaUser = "-";
@@ -213,64 +226,54 @@ jabatanUser = profil.data.jabatan || "-";
 
 let isLastPage = false;
 
-if (data.length === 0) {
-  doc.text("Tidak ada transaksi", 14, 120);
-} else {
-  doc.autoTable({
-    startY: 118,
-    margin: { bottom: 70 }, // penting: kasih ruang TTD
+const chunks = smartChunk(rows);
 
-    head: [[
-      "No",
-      "Tanggal",
-      "Kategori",
-      "Keterangan",
-      "Masuk",
-      "Keluar"
-    ]],
+  chunks.forEach((chunk, index) => {
+    if (index > 0) doc.addPage();
 
-    body: rows,
+    doc.autoTable({
+      startY: index === 0 ? 118 : 20,
+      margin: { bottom: 70 },
 
-    theme: "grid",
+      head: [[
+        "No",
+        "Tanggal",
+        "Kategori",
+        "Keterangan",
+        "Masuk",
+        "Keluar"
+      ]],
 
-    styles: {
-      fontSize: 9
-    },
+      body: chunk,
 
-    headStyles: {
-      fillColor: [220, 220, 220], // abu muda
-      textColor: 0,               // hitam
-      fontStyle: "bold",
-      lineWidth: 0.2,
-      halign: "center"              // bikin garis header lebih tegas
-    },
+      theme: "grid",
 
-    didParseCell: function (data) {
-      if (data.cell.raw?.dataKey === "__spacer") {
-        data.cell.styles.lineWidth = 0;
-        data.cell.styles.fillColor = false; 
+      styles: {
+        fontSize: 9
+      },
+
+      headStyles: {
+        fillColor: [220, 220, 220],
+        textColor: 0,
+        fontStyle: "bold",
+        lineWidth: 0.2,
+        halign: "center"
       }
-    },
-
-    didDrawCell: function (data) {
-      if (data.row.index !== ttdIndex) return;
-      if (data.column.index !== 0) return;
-
-      const doc = data.doc;
-
-      const pageWidth = doc.internal.pageSize.getWidth();
-
-      const x = pageWidth - 70; // kanan
-      const y = data.cell.y + 8;
-
-      doc.setFontSize(10);
-      doc.text(`Jakarta, ${formatTanggalCetak()}`, x, y);
-      doc.text("Disusun oleh,", x, y + 8);
-      doc.text(jabatanUser, x, y + 16);
-      doc.text(namaUser, x, y + 45);
-    }
+    });
   });
-}
+
+const lastPage = doc.getNumberOfPages();
+doc.setPage(lastPage);
+
+const ttdX = pageWidth - 70;
+const ttdY = pageHeight - 70; // posisi bawah kanan
+
+doc.setFontSize(10);
+
+doc.text(`Jakarta, ${formatTanggalCetak()}`, ttdX, ttdY);
+doc.text("Dilaporkan oleh,", ttdX, ttdY + 8);
+doc.text(jabatanUser, ttdX, ttdY + 16);
+doc.text(namaUser, ttdX, ttdY + 40);
 
 
 
@@ -380,6 +383,6 @@ for (let i = 1; i <= totalPages; i++) {
   );
 }
 
-doc.save(`Laporan-${bulanKey}.pdf`);
+doc.save(`LAPORAN-${namaUser}-${bulanKey}.pdf`);
 
 }

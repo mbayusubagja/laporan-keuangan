@@ -464,7 +464,7 @@ function renderTransaksi(data, tanggal){
 
           <div class="jenis"><br>
 
-          catatan : ${trx.catatan || "-"}
+          Keterangan : ${trx.catatan || "-"}
 
           </div>
         </div>
