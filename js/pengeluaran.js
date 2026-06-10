@@ -287,6 +287,10 @@ async function simpanPengeluaran(){
           pesan
         );
 
+        sessionStorage.removeItem(
+          "editTransaksi"
+        );
+
         window.location.href =
           "dashboard.html";
 

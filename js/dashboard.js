@@ -340,6 +340,9 @@ document.addEventListener(
 "DOMContentLoaded",
 async () => {
 
+  sessionStorage.removeItem("editTransaksi");
+
+
   // ================= TOAST =================
   const pesan =
     sessionStorage.getItem("toastMessage");

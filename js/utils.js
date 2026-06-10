@@ -31,7 +31,9 @@ document.addEventListener("click", function (e) {
 function goBack() {
   if (document.referrer && document.referrer !== window.location.href) {
     window.history.back();
+    clearEditMode();
   } else {
+    clearEditMode();
     window.location.href = "dashboard.html"; // fallback kalau tidak ada history
   }
 }
@@ -58,4 +60,8 @@ function formatTanggal(t){
 function toggleMenu() {
   const menu = document.getElementById("menuList");
   menu.classList.toggle("hidden");
+}
+
+function clearEditMode(){
+  sessionStorage.removeItem("editTransaksi");
 }
