@@ -11,79 +11,47 @@ function formatDateTimeLocal(date){
 }
 
 // ======================== tanggal default hari ini ============================
-document.addEventListener("DOMContentLoaded", function(){
+document.addEventListener("DOMContentLoaded", () => {
 
-  const trx =
-    JSON.parse(
-      sessionStorage.getItem("editTransaksi")
-      || "null"
-    );
+  const trx = sessionStorage.getItem("editTransaksi");
+  const urlParams = new URLSearchParams(window.location.search);
 
-  const inputTanggal =
-    document.getElementById("tanggal");
+  const isEditMode = urlParams.get("mode") === "edit";
 
-  // MODE EDIT
-  if(trx){
-
-  uploadedImageUrl = trx.url_image || "";
-  uploadedFileId = trx.fileId || "";
-
-  const preview =
-    document.getElementById("preview");
-
-    if(trx.fileId){
-
-      document.getElementById("preview").src =
-        "https://drive.google.com/thumbnail?id=" +
-        trx.fileId +
-        "&sz=w1000";
-
-    }
-
-    // kategori
-    const select =
-      document.getElementById("kategori");
-
-    const value =
-      String(trx.kategori)
-      .toLowerCase();
-
-    for(const opt of select.options){
-
-      if(
-        opt.value.toLowerCase() === value
-      ){
-        select.value = opt.value;
-        break;
-      }
-
-    }
-
-    document.getElementById("nominal").value =
-      "Rp " +
-      Number(trx.nominal)
-      .toLocaleString("id-ID");
-
-    document.getElementById("catatan").value =
-      trx.catatan || "";
-
-    // tanggal edit
-    inputTanggal.value =
-      formatDateTimeLocal(
-        new Date(
-          Number(trx.timestamp)
-        )
-      );
-
-    return;
+  // ❗ kalau bukan dari edit → hapus session
+  if (!isEditMode) {
+    sessionStorage.removeItem("editTransaksi");
   }
 
-  // MODE TAMBAH BARU
-  inputTanggal.value =
-    formatDateTimeLocal(
-      new Date()
-    );
+  const data = isEditMode && trx ? JSON.parse(trx) : null;
 
+  const inputTanggal = document.getElementById("tanggal");
+
+  // default selalu jalan dulu
+  inputTanggal.value = formatDateTimeLocal(new Date());
+
+  if (!data) return;
+
+  // ===== MODE EDIT =====
+  uploadedImageUrl = data.url_image || "";
+  uploadedFileId = data.fileId || "";
+
+  if (data.fileId) {
+    document.getElementById("preview").src =
+      `https://drive.google.com/thumbnail?id=${data.fileId}&sz=w1000`;
+  }
+
+  document.getElementById("kategori").value = data.kategori || "";
+
+  document.getElementById("nominal").value =
+    "Rp " + Number(data.nominal || 0).toLocaleString("id-ID");
+
+  document.getElementById("catatan").value = data.catatan || "";
+
+  if (data.timestamp) {
+    inputTanggal.value =
+      formatDateTimeLocal(new Date(Number(data.timestamp)));
+  }
 });
 
 // ====================== image uploade ==========================
