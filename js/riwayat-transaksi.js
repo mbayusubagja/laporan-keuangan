@@ -431,9 +431,6 @@ function renderTransaksi(
   forceRender = false
 ){
 
-  dataAktif = data;
-  tanggalAktif = tanggal;
-
   const container =
     document.getElementById(
       "transaksi-" + tanggal
@@ -446,6 +443,9 @@ function renderTransaksi(
     container.innerHTML = "";
     return;
   }
+
+  dataAktif = data;
+  tanggalAktif = tanggal;
 
   container.innerHTML = "";
 
