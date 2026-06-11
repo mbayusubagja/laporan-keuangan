@@ -3,6 +3,10 @@ let activeCard = null;
 let dataAktif = [];
 let tanggalAktif = null;
 
+let limitTanggal = 5;
+let totalTanggal = 0;
+let dataBulanAktif = [];
+
 const user = JSON.parse(
   sessionStorage.getItem("user") ||
   localStorage.getItem("user") ||
@@ -108,7 +112,6 @@ async function loadRiwayat(){
 
   try{
 
-    // 🔥 FORCE CLEAR UI LAMA (WAJIB DI SINI)
     document.getElementById("listTanggal").innerHTML = "";
     document.getElementById("listKategori").innerHTML = "";
     document.getElementById("cardListTanggal").style.display = "none";
@@ -174,6 +177,9 @@ async function loadRiwayat(){
     
 
       card.onclick = () => {
+
+        limitTanggal = 5;
+        limitTransaksi = 5;
 
         const cardListTanggal =
           document.getElementById("cardListTanggal");
@@ -342,6 +348,17 @@ function groupByTanggal(data){
 // =================== render tanggal =====================
 function renderTanggal(data){
 
+  dataBulanAktif = data;
+
+  const oldBtn =
+    document.getElementById(
+      "btnLoadMoreTanggal"
+    );
+
+  if(oldBtn){
+    oldBtn.remove();
+  }
+
   const list =
     document.getElementById("listTanggal");
 
@@ -352,14 +369,13 @@ function renderTanggal(data){
 
   const grup =
     groupByTanggal(data);
+  
+  const daftarTanggal = Object.keys(grup)
+  .sort((a,b) => new Date(b) - new Date(a));
 
-  Object.keys(grup)
+  totalTanggal = daftarTanggal.length;
 
-      .sort((a,b) => {
-
-        return new Date(b) - new Date(a);
-
-      })
+  daftarTanggal.slice(0, limitTanggal)
 
     .forEach(tanggal => {
 
@@ -388,6 +404,10 @@ function renderTanggal(data){
 
       card.onclick = () => {
 
+        if(tanggalAktif !== tanggal){
+          limitTransaksi = 5;
+        }
+
         renderTransaksi(
           grup[tanggal],
           tanggal
@@ -397,103 +417,107 @@ function renderTanggal(data){
 
       list.appendChild(card);
     });
+
+    updateButtonLoadMoreTanggal()
 }
 
 // ================= RENDER TRANSAKSI =================
 
 let limitTransaksi = 5;
 
-function renderTransaksi(data, tanggal){
+function renderTransaksi(
+  data,
+  tanggal,
+  forceRender = false
+){
 
   dataAktif = data;
   tanggalAktif = tanggal;
+
   const container =
     document.getElementById(
       "transaksi-" + tanggal
     );
 
-  // ================= TOGGLE =================
-
-  if(container.innerHTML.trim() !== ""){
-
+  if(
+    !forceRender &&
+    container.innerHTML.trim() !== ""
+  ){
     container.innerHTML = "";
     return;
   }
 
-  const tampil = [...data].sort((a,b) => {
+  container.innerHTML = "";
 
-    return (
-      parseTanggal(b)
-    ) - (
-      parseTanggal(a)
-    );
-
-  });
+  const tampil = [...data]
+    .sort((a,b)=>
+      parseTanggal(b)-parseTanggal(a)
+    )
+    .slice(0, limitTransaksi);
 
   tampil.forEach(trx => {
+      let warna = "#222";
 
-    let warna = "#222";
+      if(trx.jenis === "masuk"){
+        warna = "#22c55e";
+      }
 
-    if(trx.jenis === "masuk"){
-      warna = "#22c55e";
-    }
+      if(trx.jenis === "keluar"){
+        warna = "#ef4444";
+      }
 
-    if(trx.jenis === "keluar"){
-      warna = "#ef4444";
-    }
+      const item =
+        document.createElement("div");
 
-    const item =
-      document.createElement("div");
+      item.className =
+        "transaksiItem";
 
-    item.className =
-      "transaksiItem";
+      item.innerHTML = `
 
-    item.innerHTML = `
+        <div class="transaksiHeader"
+          style="
+            border-bottom:1px solid #eee;
+            padding-bottom:10px;
+            margin-bottom:10px;
+          ">
 
-      <div class="transaksiHeader"
-        style="
-          border-bottom:1px solid #eee;
-          padding-bottom:10px;
-          margin-bottom:10px;
-        ">
+          <div>
+            ${formatJam(trx)}<br>
+            
+            <strong>${trx.kategori}</strong> 
 
-        <div>
-          ${formatJam(trx)}<br>
-          
-          <strong>${trx.kategori}</strong> 
+            <div class="jenis"><br>
 
-          <div class="jenis"><br>
+            Keterangan : ${trx.catatan || "-"}
 
-          Keterangan : ${trx.catatan || "-"}
-
-          </div>
-        </div>
-
-        <div style="text-align:right;">
-
-          <div class="nominal"
-            style="color:${warna}">
-
-            ${formatRupiah(trx.nominal)}
-
+            </div>
           </div>
 
+          <div style="text-align:right;">
+
+            <div class="nominal"
+              style="color:${warna}">
+
+              ${formatRupiah(trx.nominal)}
+
+            </div>
+
+          </div>
+
         </div>
+      `;
 
-      </div>
-    `;
+      item.style.cursor = "pointer";
 
-    item.style.cursor = "pointer";
+      item.onclick = (e) => {
+        e.stopPropagation(); // agar tidak klik dobel div
+        openModal(trx);
+      };
 
-    item.onclick = (e) => {
-      e.stopPropagation(); // agar tidak klik dobel div
-      openModal(trx);
-    };
-
-    container.appendChild(item);
-
+      container.appendChild(item);
   });
 
+  updateButtonLoadMore();
 }
 
 // ================= modal detail transaksi =================
@@ -541,7 +565,22 @@ async function openModal(trx){
     `
     : `<div>Bukti tidak tersedia</div>`;
 
+    const warnaNominal =
+      trx.jenis.toLowerCase() === "masuk"
+            ? "#22c55e"
+            : "#ef4444";
+
   document.getElementById("modalContent").innerHTML = `
+    <div class="modalRow">
+      <div class="modalLabel">Tanggal</div>
+      <div class="modalValue">${formatTanggalIndonesia(trx.timestamp)}</div>
+    </div>
+
+    <div class="modalRow">
+      <div class="modalLabel">Jam</div>
+      <div class="modalValue">${formatJam(trx)}</div>
+    </div>
+
     <div class="modalRow">
       <div class="modalLabel">Kategori</div>
       <div class="modalValue">${trx.kategori}</div>
@@ -554,7 +593,10 @@ async function openModal(trx){
 
     <div class="modalRow">
       <div class="modalLabel">Nominal</div>
-      <div class="modalValue">${formatRupiah(trx.nominal)}</div>
+      <div class="modalValue"
+           style="color:${warnaNominal};font-weight:600;">
+           ${formatRupiah(trx.nominal)}
+      </div>
     </div>
 
     <div class="modalRow">
@@ -670,14 +712,37 @@ function loadMore(){
 
   limitTransaksi += 5;
 
-  renderTransaksi(dataAktif);
+  renderTransaksi(
+    dataAktif,
+    tanggalAktif,
+    true
+  );
 }
 
 function loadLess(){
 
   limitTransaksi = 5;
 
-  renderTransaksi(dataAktif);
+  renderTransaksi(
+    dataAktif,
+    tanggalAktif,
+    true
+  );
+}
+
+// ==================== btn load more tanggal =====================
+function loadMoreTanggal(){
+
+  limitTanggal += 5;
+
+  renderTanggal(dataBulanAktif);
+}
+
+function loadLessTanggal(){
+
+  limitTanggal = 5;
+
+  renderTanggal(dataBulanAktif);
 }
 
 // ================= SHOW TAB ==================
@@ -743,7 +808,9 @@ function showTab(tab){
 function updateButtonLoadMore(){
 
   const list =
-    document.getElementById("listTransaksi");
+    document.getElementById(
+      "transaksi-" + tanggalAktif
+    );
 
   let btn =
     document.getElementById("btnLoadMore");
@@ -754,38 +821,71 @@ function updateButtonLoadMore(){
 
     btn.id = "btnLoadMore";
 
-    btn.style.width = "100%";
-    btn.style.padding = "12px";
-    btn.style.marginTop = "10px";
-    btn.style.border = "none";
-    btn.style.borderRadius = "12px";
-    btn.style.background = "#2d89ef";
-    btn.style.color = "white";
-    btn.style.fontWeight = "bold";
+    btn.onclick = (e) => {
 
-    btn.onclick = () => {
+      e.stopPropagation();
 
       if(limitTransaksi >= dataAktif.length){
         loadLess();
-      } else {
+      }else{
         loadMore();
       }
     };
 
-    list.parentNode.appendChild(btn);
+    list.appendChild(btn); 
   }
 
-  if(limitTransaksi >= dataAktif.length){
-    btn.innerText = "Tampilkan Lebih Sedikit";
-  } else {
-    btn.innerText = "Load More";
+  btn.innerText =
+    limitTransaksi >= dataAktif.length
+      ? "Tampilkan Lebih Sedikit"
+      : "Load More";
+
+  btn.style.display =
+    dataAktif.length <= 5
+      ? "none"
+      : "block";
+}
+
+// ===================== update load more tanggal ========================
+function updateButtonLoadMoreTanggal(){
+
+  const list =
+    document.getElementById(
+      "listTanggal"
+    );
+
+  let btn =
+    document.getElementById("btnLoadMoreTanggal");
+
+  if(!btn){
+
+    btn = document.createElement("button");
+
+    btn.id = "btnLoadMoreTanggal";
+
+    btn.onclick = (e) => {
+
+      e.stopPropagation();
+
+      if(limitTanggal >= totalTanggal){
+        loadLessTanggal();
+      }else{
+        loadMoreTanggal();
+      }
+    };
+
+    list.appendChild(btn); 
   }
 
-  if(dataAktif.length <= 5){
-    btn.style.display = "none";
-  } else {
-    btn.style.display = "block";
-  }
+  btn.innerText =
+    limitTanggal >= totalTanggal
+      ? "Tampilkan Lebih Sedikit"
+      : "Load More";
+
+  btn.style.display =
+    totalTanggal <= 5
+      ? "none"
+      : "block";
 }
 
 // ===================== proses download pdf ========================
