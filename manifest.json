@@ -1,6 +1,6 @@
 {
-  "name": "Laporan Keuangan Operasional",
-  "short_name": "Laporan Keuangan",
+  "name": "Laporan Keuangan Operasional MJI",
+  "short_name": "Laporan Kasbonop MJI",
   "start_url": "/login.html",
   "display": "standalone",
   "background_color": "#ffffff",
