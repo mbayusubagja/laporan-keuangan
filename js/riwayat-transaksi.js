@@ -1,11 +1,11 @@
 let activeBulan = null;
 let activeCard = null;
-let dataAktif = [];
-let tanggalAktif = null;
 
 let limitTanggal = 5;
 let totalTanggal = 0;
 let dataBulanAktif = [];
+
+const limitTransaksiMap = {};
 
 const user = JSON.parse(
   sessionStorage.getItem("user") ||
@@ -404,10 +404,6 @@ function renderTanggal(data){
 
       card.onclick = () => {
 
-        if(tanggalAktif !== tanggal){
-          limitTransaksi = 5;
-        }
-
         renderTransaksi(
           grup[tanggal],
           tanggal
@@ -423,13 +419,15 @@ function renderTanggal(data){
 
 // ================= RENDER TRANSAKSI =================
 
-let limitTransaksi = 5;
-
 function renderTransaksi(
   data,
   tanggal,
   forceRender = false
 ){
+
+  if(!limitTransaksiMap[tanggal]){
+    limitTransaksiMap[tanggal] = 5;
+  }
 
   const container =
     document.getElementById(
@@ -444,16 +442,16 @@ function renderTransaksi(
     return;
   }
 
-  dataAktif = data;
-  tanggalAktif = tanggal;
-
   container.innerHTML = "";
 
   const tampil = [...data]
     .sort((a,b)=>
       parseTanggal(b)-parseTanggal(a)
     )
-    .slice(0, limitTransaksi);
+    .slice(
+      0,
+      limitTransaksiMap[tanggal]
+    );
 
   tampil.forEach(trx => {
       let warna = "#222";
@@ -517,7 +515,10 @@ function renderTransaksi(
       container.appendChild(item);
   });
 
-  updateButtonLoadMore();
+  updateButtonLoadMore(
+    data,
+    tanggal
+  );
 }
 
 // ================= modal detail transaksi =================
@@ -705,31 +706,6 @@ document.getElementById("modalOverlay").onclick = function(e){
   }
 };
 
-
-// ================ BUTTON LOAD MORE/LESS ==================
-
-function loadMore(){
-
-  limitTransaksi += 5;
-
-  renderTransaksi(
-    dataAktif,
-    tanggalAktif,
-    true
-  );
-}
-
-function loadLess(){
-
-  limitTransaksi = 5;
-
-  renderTransaksi(
-    dataAktif,
-    tanggalAktif,
-    true
-  );
-}
-
 // ==================== btn load more tanggal =====================
 function loadMoreTanggal(){
 
@@ -805,15 +781,18 @@ function showTab(tab){
 
 // ===================== BUTTON VISIBILITY ========================
 
-function updateButtonLoadMore(){
+function updateButtonLoadMore(
+  data,
+  tanggal
+){
 
   const list =
     document.getElementById(
-      "transaksi-" + tanggalAktif
+      "transaksi-" + tanggal
     );
 
   const btnId =
-    "btnLoadMore-" + tanggalAktif;
+    "btnLoadMore-" + tanggal;
 
   let btn =
     document.getElementById(btnId);
@@ -828,23 +807,38 @@ function updateButtonLoadMore(){
 
       e.stopPropagation();
 
-      if(limitTransaksi >= dataAktif.length){
-        loadLess();
+      if(
+        limitTransaksiMap[tanggal]
+        >=
+        data.length
+      ){
+
+        limitTransaksiMap[tanggal] = 5;
+
       }else{
-        loadMore();
+
+        limitTransaksiMap[tanggal] += 5;
+
       }
+
+      renderTransaksi(
+        data,
+        tanggal,
+        true
+      );
+
     };
 
-    list.appendChild(btn); 
+    list.appendChild(btn);
   }
 
   btn.innerText =
-    limitTransaksi >= dataAktif.length
-      ? "Tampilkan Lebih Sedikit"
-      : "Load More";
+  limitTransaksiMap[tanggal] >= data.length
+  ? "Tampilkan Sedikit"
+  : "Tampilkan Lebih Banyak";
 
   btn.style.display =
-    dataAktif.length <= 5
+    data.length <= 5
       ? "none"
       : "block";
 }
@@ -882,8 +876,8 @@ function updateButtonLoadMoreTanggal(){
 
   btn.innerText =
     limitTanggal >= totalTanggal
-      ? "Tampilkan Lebih Sedikit"
-      : "Load More";
+      ? "Tampilkan Sedikit"
+      : "Tampilkan Lebih Banyak";
 
   btn.style.display =
     totalTanggal <= 5
