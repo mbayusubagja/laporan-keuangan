@@ -812,14 +812,17 @@ function updateButtonLoadMore(){
       "transaksi-" + tanggalAktif
     );
 
+  const btnId =
+    "btnLoadMore-" + tanggalAktif;
+
   let btn =
-    document.getElementById("btnLoadMore");
+    document.getElementById(btnId);
 
   if(!btn){
 
     btn = document.createElement("button");
 
-    btn.id = "btnLoadMore";
+    btn.id = btnId;
 
     btn.onclick = (e) => {
 
