@@ -35,8 +35,10 @@
 
         <h3>Login / Register</h3>
 
-        <input id="noHp" placeholder="No HP (62xxx)"
-               inputmode="numeric">
+        <div class="phone-input">
+            <span class="prefix">62</span>
+            <input id="noHp" placeholder="81234567890" inputmode="numeric">
+        </div>
         <input id="password" type="password" placeholder="Password">
 
         <div class="toggle" onclick="togglePass()">👁 Lihat Password</div>
@@ -117,7 +119,7 @@
         >
         <div
         class="toggle"
-        onclick="togglePasswordBaru()"
+        onclick="togglePassBaru()"
         >
         👁 Lihat Password
         </div>

@@ -674,5 +674,16 @@ body.modalOpen{
   color:white;
 }
 
+.btnPdf {
+  background-color: #4a93e7;
+}
+
+#btnLoadMoreTanggal {
+  background-color: #666666;
+}
+
+.card .tanggalCard button {
+  background-color: #666666;
+}
 
 

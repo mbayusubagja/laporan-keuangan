@@ -271,8 +271,8 @@ const ttdY = pageHeight - 70; // posisi bawah kanan
 doc.setFontSize(10);
 
 doc.text(`Jakarta, ${formatTanggalCetak()}`, ttdX, ttdY);
-doc.text("Dilaporkan oleh,", ttdX, ttdY + 8);
-doc.text(jabatanUser, ttdX, ttdY + 16);
+doc.text("Dilaporkan oleh,", ttdX, ttdY + 5);
+doc.text(jabatanUser, ttdX, ttdY + 10);
 doc.text(namaUser, ttdX, ttdY + 40);
 
 

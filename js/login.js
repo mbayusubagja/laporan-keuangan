@@ -22,42 +22,36 @@ function togglePass(){
     : "password";
 }
 
+function togglePassBaru(){
 
+  const p =
+    document.getElementById("passwordBaru");
 
-function validasi(){
+  p.type =
+    p.type === "password"
+    ? "text"
+    : "password";
+}
 
-  const password =
-    document.getElementById("password")
-    .value
-    .trim();
+// ================================ validasi ==================================
 
-  const noHp =
-    document.getElementById("noHp")
-    .value
-    .trim();
+function validasi() {
+  const password = document.getElementById("password").value.trim();
+  const noHpRaw = document.getElementById("noHp").value.trim();
 
-
-
-  if(!password){
-
+  if (!password) {
     return "Password wajib diisi";
   }
 
-
-
-  if(!noHp){
-
+  if (!noHpRaw) {
     return "No HP wajib diisi";
   }
 
+  const noHp = formatNomorHP(noHpRaw);
 
-
-  if(!noHp.startsWith("62")){
-
-    return "Nomor harus diawali 62";
+  if (noHp.length < 10) {
+    return "Nomor HP tidak valid";
   }
-
-
 
   return null;
 }
@@ -74,7 +68,8 @@ async function login(){
 
   const loginBtn = document.getElementById("loginBtn");
 
-  const noHp = document.getElementById("noHp").value.trim();
+  const noHpRaw = document.getElementById("noHp").value.trim();
+  const noHp = formatNomorHP(noHpRaw);
   const password = document.getElementById("password").value.trim();
 
   status("Sedang login...");
@@ -218,7 +213,8 @@ async function register(){
 
   const registerBtn = document.getElementById("registerBtn");
 
-  const noHp = document.getElementById("noHp").value.trim();
+  const noHpRaw = document.getElementById("noHp").value.trim();
+  const noHp = formatNomorHP(noHpRaw);
   const password = document.getElementById("password").value.trim();
 
   if(password.length < 6){
@@ -524,4 +520,19 @@ function togglePasswordBaru(){
 
   }
 
+}
+
+// ======================= format no hp sudah diawali 62 =======================
+
+function formatNomorHP(input) {
+  let nomor = input.trim();
+  nomor = nomor.replace(/\D/g, '');
+
+  if (nomor.startsWith('0')) {
+    nomor = '62' + nomor.slice(1);
+  } else if (!nomor.startsWith('62')) {
+    nomor = '62' + nomor;
+  }
+
+  return nomor;
 }

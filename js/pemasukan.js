@@ -38,7 +38,14 @@ document.addEventListener("DOMContentLoaded", function(){
         trx.fileId +
         "&sz=w1000";
 
+    console.log(
+      "preview src",
+      document.getElementById("preview").src
+    );
+
     }
+
+
 
     // kategori
     const select =

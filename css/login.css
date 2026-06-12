@@ -1,7 +1,7 @@
 .toggle{
   font-size:12px;
   cursor:pointer;
-  color:blue;
+  color:#666666;
 }
 
 .btnAdmin{
@@ -87,3 +87,108 @@
     margin:0;
     font-size:20px;
 }
+
+.card h3 {
+  color: #666666;
+}
+
+/* ======================= login ======================== */
+.phone-input{
+  display:flex;
+  width:100%;
+  height:44px;
+  margin-bottom: 10px;
+}
+
+.prefix{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top: 8px;
+
+  padding:0 12px;
+
+  border:1px solid #ddd;
+
+  border-radius:8px 0 0 8px;
+  box-sizing:border-box;
+  font-size: 14px;
+}
+
+.phone-input input{
+  flex:1;
+  height:100%;          /* penting */
+
+  border:1px solid #ddd;
+  border-left:none;
+
+  border-radius:0 8px 8px 0;
+  box-sizing:border-box;
+
+  padding:0 10px;       /* bukan 10px semua sisi */
+}
+
+.prefix,
+.phone-input input{
+  height:100%;
+}
+
+
+#password{
+  width:100%;
+  padding:10px;
+height:44px;
+  border:1px solid #ddd;
+  border-radius:8px;
+
+  margin:10px 0;
+  box-sizing:border-box;
+}
+
+.phone-input,
+#password{
+  width:100%;
+  box-sizing:border-box;
+}
+
+.card {
+  width: 300px;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+@media (max-width:376px){
+
+  .card {
+    width: 85%;
+  }
+
+}
+
+@media (max-width:400px){
+
+  .modal-content {
+    width: 80%;
+  }
+
+  .card {
+    width: 85%;
+  }
+
+}
+
+@media (max-width:350px){
+
+  .modal-content {
+    width: 80%;
+  }
+
+  .card {
+    width: 85%;
+  }
+
+}
+
