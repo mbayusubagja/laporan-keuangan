@@ -1,3 +1,7 @@
+body {
+  margin: 0;
+}
+
 .header{
   background:#333333;
   color:white;
