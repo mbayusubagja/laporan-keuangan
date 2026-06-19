@@ -280,16 +280,40 @@ async function loadRiwayat(){
 
           </div>
 
-          <div class="btnDownloadPdf">
-            <button
-              class="btnPdf"
-              onclick="handleDownloadPDF(this, '${key}')"
-            >
-              📄 Download PDF
-            </button>
+          <div class="filter-pdf">
+
+            <h3>Unduh Laporan</h3>
+
+            <label>Dari Tanggal</label>
+            <input type="date" id="tglAwal">
+
+            <label>Sampai Tanggal</label>
+            <input type="date" id="tglAkhir">
+
+            <div class="btnDownloadPdf">
+              <button
+                class="btnPdf"
+                onclick="handleDownloadPDF(this, '${key}')"
+              >
+                📄 Download PDF
+              </button>
+            </div>
+
           </div>
 
         `;
+
+        // isi otomatis tanggal
+        const [tahun, bulan] = key.split("-");
+
+        const lastDay =
+          new Date(tahun, bulan, 0).getDate();
+
+        document.getElementById("tglAwal").value =
+          `${tahun}-${bulan}-01`;
+
+        document.getElementById("tglAkhir").value =
+          `${tahun}-${bulan}-${String(lastDay).padStart(2, "0")}`;
 
         renderTanggal(
           hasil.bulan[key]
@@ -414,7 +438,7 @@ function renderTanggal(data){
       list.appendChild(card);
     });
 
-    updateButtonLoadMoreTanggal()
+    updateButtonLoadMoreTanggal();
 }
 
 // ================= RENDER TRANSAKSI =================
@@ -888,21 +912,49 @@ function updateButtonLoadMoreTanggal(){
 // ===================== proses download pdf ========================
 
 async function handleDownloadPDF(btn, key) {
-  // disable tombol
+
   btn.disabled = true;
   const oldText = btn.innerHTML;
   btn.innerHTML = "⏳ Sedang membuat PDF...";
 
   try {
-    await downloadLaporanPDF(key);
+
+    const tglAwal =
+      document.getElementById("tglAwal").value;
+
+    const tglAkhir =
+      document.getElementById("tglAkhir").value;
+
+    // VALIDASI
+    if (!tglAwal || !tglAkhir) {
+      alert("Silakan pilih tanggal terlebih dahulu");
+      return;
+    }
+
+    if (new Date(tglAwal) > new Date(tglAkhir)) {
+      alert("Tanggal awal tidak boleh lebih besar dari tanggal akhir");
+      return;
+    }
+
+    await downloadLaporanPDF(
+      key,
+      tglAwal,
+      tglAkhir,
+      btn
+    );
+
   } catch (err) {
+
     console.error(err);
     alert("Gagal download PDF");
+
   } finally {
-    // balikin tombol
+
     btn.disabled = false;
     btn.innerHTML = oldText;
+
   }
+
 }
 
 // ===================== RENDER KATEGORI =======================

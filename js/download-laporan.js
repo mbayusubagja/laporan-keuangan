@@ -110,7 +110,12 @@ function getMonthInfo(bulanKey) {
 }
 
 // =================== download pdf =================================
-async function downloadLaporanPDF(bulanKey){
+async function downloadLaporanPDF(
+  bulanKey,
+  tanggalAwal = null,
+  tanggalAkhir = null,
+  btn = null
+){
 
 const { jsPDF } = window.jspdf;
 const doc = new jsPDF();
@@ -121,13 +126,35 @@ const res = await fetch(
 
 const hasil = await res.json();
 
-const data = hasil.bulan[bulanKey] || [];
+let data = hasil.bulan[bulanKey] || [];
+
+if (tanggalAwal && tanggalAkhir) {
+
+  const start = new Date(tanggalAwal);
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date(tanggalAkhir);
+  end.setHours(23, 59, 59, 999);
+
+  data = data.filter(trx => {
+    const tgl = parseTanggal(trx);
+    return tgl >= start && tgl <= end;
+  });
+
+}
 
 const imageCache = {};
 
 
 const pageHeight = doc.internal.pageSize.getHeight();
 const pageWidth = doc.internal.pageSize.getWidth();
+
+
+let loaded = 0;
+
+const totalLampiran =
+  data.filter(x => x.url_image).length;
+
 
 await Promise.all(
 
@@ -140,6 +167,7 @@ await Promise.all(
     if (!fileId) return;
 
     const imgBase64 = await getImageBase64(fileId);
+
     const size = await getImageSize(imgBase64);
 
     imageCache[fileId] = {
@@ -147,9 +175,21 @@ await Promise.all(
       size: size
     };
 
+    loaded++;
+
+    if (btn) {
+      btn.innerHTML =
+        `⏳ Lampiran ${loaded}/${totalLampiran}`;
+    }
+
   })
 
 );
+
+if (btn) {
+  btn.innerHTML = "⏳ Membuat PDF...";
+}
+
 
 let totalMasuk = 0;
 let totalKeluar = 0;
@@ -180,7 +220,27 @@ doc.setFontSize(12);
 doc.text(`Bulan ${info.nama} ${info.tahun}`, 105, 60, { align: "center" });
 
 doc.setFontSize(10);
-doc.text(`Periode: ${info.start} - ${info.end}`, 14, 72);
+
+let periodeText;
+
+if (tanggalAwal && tanggalAkhir) {
+
+  periodeText =
+    `${formatTanggalIndonesia(new Date(tanggalAwal))} - ` +
+    `${formatTanggalIndonesia(new Date(tanggalAkhir))}`;
+
+} else {
+
+  periodeText =
+    `${info.start} - ${info.end}`;
+
+}
+
+doc.text(
+  `Periode: ${periodeText}`,
+  14,
+  72
+);
 
 // ================= RINGKASAN =================
 doc.roundedRect(14, 78, 80, 30, 2, 2);
@@ -285,7 +345,12 @@ doc.setFontSize(16);
 doc.text("LAMPIRAN BUKTI TRANSAKSI", 105, 15, { align: "center" });
 
 doc.setFontSize(9);
-doc.text(`Periode ${info.nama} ${info.tahun}`, 105, 22, { align: "center" });
+doc.text(
+  `Periode ${periodeText}`,
+  105,
+  22,
+  { align: "center" }
+);
 
 let y = 30;
 let num = 1;
@@ -382,6 +447,14 @@ for (let i = 1; i <= totalPages; i++) {
     { align: "center" }
   );
 }
+
+if (btn) {
+  btn.innerHTML = "⏳ Menyimpan PDF...";
+}
+
+await new Promise(resolve =>
+  setTimeout(resolve, 100)
+);
 
 doc.save(`LAPORAN-${namaUser}-${bulanKey}.pdf`);
 
