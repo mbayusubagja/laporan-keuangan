@@ -3,8 +3,8 @@
   "short_name": "Laporan Kasbonop MJI",
   "start_url": "/login.html",
   "display": "standalone",
-  "background_color": "#f5f7fb",
-  "theme_color": "#f5f7fb",
+  "background_color": "#f5f5f5",
+  "theme_color": "#f5f5f5",
   "icons": [
     {
       "src": "/icon-192.png",
