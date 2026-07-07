@@ -141,7 +141,10 @@ async function loadRiwayat(){
     let activeCard = null;
 
     const bulanKeys =
-      Object.keys(hasil.bulan || {});
+      Object.keys(hasil.bulan || {})
+      .sort((a, b) => b.localeCompare(a));
+
+
 
     if (bulanKeys.length === 0) {
 
@@ -154,9 +157,7 @@ async function loadRiwayat(){
       return;
     }
 
-    bulanKeys
-      .reverse()
-      .forEach(key => {
+    bulanKeys.forEach(key => {
 
         const card =
           document.createElement("div");

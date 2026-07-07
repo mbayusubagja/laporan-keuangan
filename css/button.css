@@ -376,9 +376,20 @@ cursor:pointer;
 }
 
 #listBulan .card {
-  margin-top:5px;
-  padding:10px;
-  cursor:pointer;
+  border-radius: 0;
+  margin-top:0;
+  margin-bottom:0 !important;
+}
+
+#listBulan .card:first-child {
+  margin-top: 10px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+#listBulan .card:last-child {
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
 
 #preview {
