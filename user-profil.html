@@ -8,6 +8,7 @@
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/button.css">
+<link rel="stylesheet" href="css/navigasi.css">
 
 
 </head>
@@ -43,19 +44,41 @@
 
   <div class="card">
     <button onclick="aturProfil()">Edit Profil</button>
-    <button onclick="backProfil()">Kembali</button>
   </div>
   
 </div>
 
-<footer id="footer">
-© 2026 Laporan Keuangan Operasional
-</footer>
+<div class="bottomNav">
+
+  <button data-menu="dashboard" onclick="lihatDashboard()">
+    <span>🏠</span>
+    <small>Home</small>
+  </button>
+
+  <button data-menu="laporan" onclick="lihatRiwayatTransaksi()">
+    <span>📊</span>
+    <small>Laporan</small>
+  </button>
+
+  <button data-menu="user-profil" onclick="lihatProfil()">
+    <span>👤</span>
+    <small>Profil</small>
+  </button>
+
+  <button data-menu="dompet" onclick="logout()">
+    <span>↪️</span>
+    <small>Logout</small>
+  </button>
+
+</div>
 
 <script src="js/config.js"></script>
+<script src="js/api.js"></script>
+
 <script src="js/auth.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/user-profil.js"></script>
+<script src="js/nav.js"></script>
 
 </body>
 </html>

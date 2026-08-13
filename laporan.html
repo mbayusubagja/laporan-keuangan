@@ -8,6 +8,7 @@
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/button.css">
+<link rel="stylesheet" href="css/navigasi.css">
 
 
 </head>
@@ -15,41 +16,29 @@
 <body>
 
 
+<div class="bottomNav">
 
-<div class="container">
+  <button data-menu="dashboard" onclick="lihatDashboard()">
+    <span>🏠</span>
+    <small>Home</small>
+  </button>
 
-  <div class="card">
+  <button data-menu="laporan" onclick="lihatRiwayatTransaksi()">
+    <span>📊</span>
+    <small>Laporan</small>
+  </button>
 
-    <div class="header">
-      <h2>Laporan Keuangan</h2>
-    </div>
-  
-    <div class="itemRingkasan">
-      <h3>Pemasukan</h3>
-      <p id="totalMasuk">Rp ...</p>
-    </div>
+  <button data-menu="user-profil" onclick="lihatProfil()">
+    <span>👤</span>
+    <small>Profil</small>
+  </button>
 
-    <div class="itemRingkasan">
-      <h3>Pengeluaran</h3>
-      <p id="totalKeluar">Rp ...</p>
-    </div>
+  <button data-menu="dompet" onclick="logout()">
+    <span>↪️</span>
+    <small>Logout</small>
+  </button>
 
-    <div class="itemRingkasan">
-      <h3>Sisa Saldo</h3>
-      <p id="sisaSaldo">Rp ...</p>
-    </div>
-
-  </div>
-
-  <div class="card">
-    <button class="btnBack">Kembali</button>
-  </div>
-  
 </div>
-
-<footer id="footer">
-© 2026 Laporan Keuangan Operasional
-</footer>
 
 <script src="js/config.js"></script>
 <script src="js/auth.js"></script>
@@ -58,6 +47,7 @@
 <script src="js/download-laporan.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@latest/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@latest/dist/jspdf.plugin.autotable.js"></script>
+<script src="js/nav.js"></script>
 
 </body>
 </html>

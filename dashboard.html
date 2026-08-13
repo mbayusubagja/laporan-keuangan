@@ -9,6 +9,8 @@
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/dashboard.css">
+<link rel="stylesheet" href="css/navigasi.css">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -52,10 +54,6 @@
               <span class="slider"></span>
             </label>
           </div>
-
-          <button class="btnProfile" onclick="aturProfil()">
-            Profil
-          </button>
 
         </div>
 
@@ -113,36 +111,42 @@
           <button onclick="tambahPemasukan()">Pemasukan</button>
           <button onclick="tambahPengeluaran()" id="btnPengeluaran">Pengeluaran</button>
 
-          <button class="menuToggle" style="background-color: #333333;" onclick="toggleMenu()">
-            Menu lainnya ▼
-          </button>
-
-        <div id="menuList" class="menuList hidden">
-
-
-          <button onclick="lihatRiwayatTransaksi()">Riwayat Transaksi</button>
-          <button onclick="lihatLaporan()">Laporan</button>
-
-        </div>
     </div>
-  </div>
-
-  <div class="card">
-      <button class="logoutBtn" onclick="logout()">
-      Logout
-      </button>
   </div>
 
 </div>
 
-<footer id="footer">
-© 2026 Laporan Keuangan Operasional
-</footer>
+<div class="bottomNav">
+
+  <button data-menu="dashboard" onclick="lihatDashboard()">
+    <span>🏠</span>
+    <small>Home</small>
+  </button>
+
+  <button data-menu="laporan" onclick="lihatRiwayatTransaksi()">
+    <span>📊</span>
+    <small>Laporan</small>
+  </button>
+
+  <button data-menu="user-profil" onclick="lihatProfil()">
+    <span>👤</span>
+    <small>Profil</small>
+  </button>
+
+  <button data-menu="dompet" onclick="logout()">
+    <span>↪️</span>
+    <small>Logout</small>
+  </button>
+
+</div>
 
 <script src="js/config.js"></script>
+<script src="js/api.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/dashboard.js"></script>
+<script src="js/nav.js"></script>
+
 
 
 </body>

@@ -187,6 +187,21 @@
         "activeUserId"
       );
 
+      localStorage.removeItem(
+          "dashboard_cache_" + user.userId
+        );
+
+      localStorage.removeItem(
+        "profil_cache_" + user.userId
+      );
+
+
+      localStorage.removeItem(
+        "riwayat_cache_" + user.userId
+      );
+      
+      
+
       showToast(
         "Session habis, silakan login lagi"
       );

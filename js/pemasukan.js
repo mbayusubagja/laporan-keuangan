@@ -236,21 +236,7 @@ async function simpanPemasukan(){
 
     // ================= SIMPAN =================
 
-    const res = await fetch(API, {
-      method: "POST",
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8"
-      },
-      body: JSON.stringify(data)
-    });
-    
-    console.log(
-      "status",
-      res.status
-    );
-
-    const hasil =
-      await res.json();
+    const hasil = await postAPI(data);
 
     const pesan =
       "✅ Pemasukan dari <b>" +
@@ -298,6 +284,14 @@ async function simpanPemasukan(){
 
         sessionStorage.removeItem(
           "editTransaksi"
+        );
+
+        localStorage.removeItem(
+          "dashboard_cache_" + user.userId
+        );
+
+        localStorage.removeItem(
+          "riwayat_cache_" + user.userId
         );
 
         window.location.href =
@@ -576,47 +570,15 @@ async function uploadBukti(){
 
   console.log(base64.length);
 
-  const res = await fetch(API,{
-    method:"POST",
-    redirect:"follow",
-    headers:{
-      "Content-Type":"text/plain;charset=utf-8"
-    },
-    body: JSON.stringify({
-
+  const result = await postAPI({
     mode: "upload_file",
-
     fileName: file.name,
-
     mimeType: mimeType,
-
-    kategori:
-      document
-        .getElementById("kategori")
-        .value,
-
+    kategori: document
+      .getElementById("kategori")
+      .value,
     base64: base64
-
-
-    })
   });
-
-  console.log(
-    "base64 length:",
-    base64.length
-  );
-
-  console.log(
-    "API:",
-    API
-  );
-
-  console.log(
-    "status",
-    res.status
-  );
-
-  const result = await res.json();
 
   console.log(result);
 

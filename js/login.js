@@ -82,16 +82,11 @@ async function login(){
 
   try{
 
-    const res = await fetch(API, {
-      method:"POST",
-      body: JSON.stringify({
-        mode:"login",
-        noHp,
-        password
-      })
+    const hasil = await postAPI({
+      mode: "login",
+      noHp,
+      password
     });
-
-    const hasil = await res.json();
 
     const activeUserId =
       localStorage.getItem("activeUserId");
@@ -236,16 +231,11 @@ async function register(){
 
   try{
 
-    const res = await fetch(API, {
-      method:"POST",
-      body: JSON.stringify({
-        mode:"register",
-        noHp,
-        password
-      })
+    const hasil = await postAPI({
+      mode: "register",
+      noHp,
+      password
     });
-
-    const hasil = await res.json();
 
     if(!hasil.ok){
 
@@ -352,23 +342,10 @@ async function kirimOtpReset(){
 
   }
 
-  const res =
-    await fetch(API,{
-
-      method:"POST",
-
-      body:JSON.stringify({
-
-        mode:"kirimOtpReset",
-
-        gmail
-
-      })
-
-    });
-
-  const data =
-    await res.json();
+  const data = await postAPI({
+    mode: "kirimOtpReset",
+    gmail
+  });
 
   alert(data.message);
 
@@ -401,25 +378,11 @@ async function verifikasiOtpReset(){
       "otpReset"
     ).value;
 
-  const res =
-    await fetch(API,{
-
-      method:"POST",
-
-      body:JSON.stringify({
-
-        mode:"verifikasiOtpReset",
-
-        gmail,
-
-        otp
-
-      })
-
-    });
-
-  const data =
-    await res.json();
+  const data = await postAPI({
+    mode: "verifikasiOtpReset",
+    gmail,
+    otp
+  });
 
   if(data.ok){
 
@@ -463,25 +426,11 @@ async function simpanPasswordBaru(){
     return;
   }
 
-  const res =
-    await fetch(API,{
-
-      method:"POST",
-
-      body:JSON.stringify({
-
-        mode:"resetPassword",
-
-        gmail,
-
-        password
-
-      })
-
-    });
-
-  const data =
-    await res.json();
+  const data = await postAPI({
+    mode: "resetPassword",
+    gmail,
+    password
+  });
 
   alert(data.msg);
 

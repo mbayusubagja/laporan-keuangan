@@ -3,6 +3,8 @@ body{
   padding:20px;
   font-family:'Inter', sans-serif;
   margin: 0;
+  padding-bottom: 90px;
+
 }
 
 .container{
@@ -58,3 +60,181 @@ button:disabled{
 }
 
 
+/* =====================================================
+   SKELETON - PULSE
+   ===================================================== */
+
+.skeleton{
+  display:inline-block;
+  background:#e5e7eb;
+  border-radius:6px;
+
+  animation:
+    skeletonPulse 1.2s infinite ease-in-out;
+}
+
+
+.skeletonSaldo{
+  width:160px;
+  height:28px;
+}
+
+
+.skeletonNominal{
+  width:110px;
+  height:20px;
+}
+
+
+.skeletonKategori{
+  width:100px;
+  height:18px;
+  margin-bottom:8px;
+}
+
+
+.skeletonKeterangan{
+  width:150px;
+  height:14px;
+  margin-bottom:8px;
+}
+
+
+.skeletonTanggal{
+  width:120px;
+  height:13px;
+}
+
+
+.skeletonTransaksi{
+  min-height:70px;
+}
+
+
+/* =====================================================
+   ANIMASI PULSE
+   ===================================================== */
+
+@keyframes skeletonPulse{
+
+  0%{
+    opacity:.5;
+  }
+
+  50%{
+    opacity:1;
+  }
+
+  100%{
+    opacity:.5;
+  }
+
+}
+
+
+/* =====================================================
+   SKELETON BULAN - SHIMMER
+   ===================================================== */
+
+.skeletonBulan{
+
+  height:40px;
+  margin-bottom:10px;
+  border-radius:10px;
+
+  background:linear-gradient(
+    90deg,
+    #eeeeee 25%,
+    #f8f8f8 50%,
+    #eeeeee 75%
+  );
+
+  background-size:200% 100%;
+
+  animation:
+    skeletonShimmer 1.2s infinite linear;
+}
+
+
+/* =====================================================
+   ANIMASI SHIMMER
+   ===================================================== */
+
+@keyframes skeletonShimmer{
+
+  0%{
+    background-position:200% 0;
+  }
+
+  100%{
+    background-position:-200% 0;
+  }
+
+}
+
+.skeleton{
+  display:inline-block;
+  background:#e5e7eb;
+  border-radius:6px;
+  animation:skeletonProfil 1.2s infinite ease-in-out;
+}
+
+.skeletonProfilNama{
+  width:140px;
+  height:20px;
+}
+
+.skeletonProfilJabatan{
+  width:100px;
+  height:16px;
+}
+
+.skeletonProfilGmail{
+  width:180px;
+  height:16px;
+}
+
+@keyframes skeletonProfil{
+
+  0%{
+    opacity:.5;
+  }
+
+  50%{
+    opacity:1;
+  }
+
+  100%{
+    opacity:.5;
+  }
+
+}
+
+.skeletonSummary {
+  display: inline-block;
+  width: 100px;
+  height: 18px;
+  border-radius: 6px;
+
+  background: linear-gradient(
+    90deg,
+    #eeeeee 25%,
+    #f7f7f7 50%,
+    #eeeeee 75%
+  );
+
+  background-size: 200% 100%;
+  animation: skeletonSummary 1.2s infinite;
+}
+
+@keyframes skeletonSummary {
+
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+
+}

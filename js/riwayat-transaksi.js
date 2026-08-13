@@ -18,6 +18,170 @@ if(!user){
   location.href = "login.html";
 }
 
+// ================= RIWAYAT CACHE =================
+
+const RIWAYAT_CACHE_KEY =
+  "riwayat_cache_" + user.userId;
+
+const RIWAYAT_CACHE_TIME =
+  30 * 1000; // 30 detik
+
+let riwayatLoading = false;
+
+
+// ================= CACHE =================
+
+function getRiwayatCache(){
+
+  try{
+
+    const cache =
+      localStorage.getItem(
+        RIWAYAT_CACHE_KEY
+      );
+
+    if(!cache){
+      return null;
+    }
+
+    return JSON.parse(cache);
+
+  }catch(err){
+
+    console.error(
+      "Cache riwayat rusak:",
+      err
+    );
+
+    localStorage.removeItem(
+      RIWAYAT_CACHE_KEY
+    );
+
+    return null;
+  }
+}
+
+
+function saveRiwayatCache(data){
+
+  try{
+
+    localStorage.setItem(
+      RIWAYAT_CACHE_KEY,
+      JSON.stringify({
+        time: Date.now(),
+        data: data
+      })
+    );
+
+  }catch(err){
+
+    console.error(
+      "Gagal menyimpan cache riwayat:",
+      err
+    );
+
+  }
+
+}
+
+
+function clearRiwayatCache(){
+
+  localStorage.removeItem(
+    RIWAYAT_CACHE_KEY
+  );
+
+}
+
+function showRiwayatSkeleton(){
+
+  const listBulan =
+    document.getElementById("listBulan");
+
+  listBulan.innerHTML = `
+
+    <div class="skeletonBulan"></div>
+    <div class="skeletonBulan"></div>
+    <div class="skeletonBulan"></div>
+    <div class="skeletonBulan"></div>
+    <div class="skeletonBulan"></div>
+
+  `;
+
+  // ================= SUMMARY =================
+
+  const totalMasuk =
+    document.getElementById("totalMasuk");
+
+  const totalKeluar =
+    document.getElementById("totalKeluar");
+
+  const sisaSaldo =
+    document.getElementById("sisaSaldo");
+
+
+  if(totalMasuk){
+    totalMasuk.innerHTML =
+      `<span class="skeletonSummary"></span>`;
+  }
+
+  if(totalKeluar){
+    totalKeluar.innerHTML =
+      `<span class="skeletonSummary"></span>`;
+  }
+
+  if(sisaSaldo){
+    sisaSaldo.innerHTML =
+      `<span class="skeletonSummary"></span>`;
+  }
+
+}
+
+function updateProgressButton(btn, persen, teks) {
+
+  if (!btn) return;
+
+  const progress =
+    Math.min(100, Math.max(0, persen));
+
+  btn.innerHTML = `
+    <div style="
+      position:relative;
+      width:100%;
+      height:22px;
+      overflow:hidden;
+      border-radius:6px;
+      background:rgba(255,255,255,0.25);
+    ">
+
+      <div style="
+        position:absolute;
+        left:0;
+        top:0;
+        height:100%;
+        width:${progress}%;
+        background:rgba(255,255,255,0.35);
+        transition:width .2s ease;
+      "></div>
+
+      <div style="
+        position:absolute;
+        inset:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:12px;
+        font-weight:600;
+        white-space:nowrap;
+      ">
+        ${teks} ${progress}%
+      </div>
+
+    </div>
+  `;
+}
+
 // ================= FORMAT =================
 
 function formatRupiah(angka){
@@ -44,6 +208,33 @@ function formatJam(trx){
         minute: "2-digit"
       }
     );
+}
+
+// ================= PARSE DATETIME LOCAL =================
+
+function parseDatetimeLocal(value) {
+
+  if (!value) return null;
+
+  const [tanggal, waktu] =
+    value.split("T");
+
+  const [tahun, bulan, hari] =
+    tanggal
+      .split("-")
+      .map(Number);
+
+  const [jam, menit] =
+    waktu
+      .split(":")
+      .map(Number);
+
+
+  return new Date(
+    `${tahun}-${String(bulan).padStart(2, "0")}-${String(hari).padStart(2, "0")}` +
+    `T${String(jam).padStart(2, "0")}:${String(menit).padStart(2, "0")}:00+07:00`
+  );
+
 }
 
 // ================= format tanggal indonesia ==================
@@ -101,243 +292,520 @@ function namaBulan(key){
 
 // ========== parse tanggal ================
 
-function parseTanggal(trx){
-return new Date(Number(trx.timestamp || 0));
+function parseTanggal(trx) {
+
+  if (!trx || trx.timestamp == null) {
+    return new Date(NaN);
+  }
+
+  const value = trx.timestamp;
+
+  // Unix timestamp
+  if (
+    typeof value === "number" ||
+    /^\d+$/.test(String(value))
+  ) {
+    return new Date(Number(value));
+  }
+
+  // ISO / datetime string
+  return new Date(value);
+}
+
+// ================= DEFAULT PERIODE LAPORAN =================
+
+function formatDatetimeLocal(date) {
+
+  const year =
+    date.getFullYear();
+
+  const month =
+    String(date.getMonth() + 1)
+      .padStart(2, "0");
+
+  const day =
+    String(date.getDate())
+      .padStart(2, "0");
+
+  const hour =
+    String(date.getHours())
+      .padStart(2, "0");
+
+  const minute =
+    String(date.getMinutes())
+      .padStart(2, "0");
+
+  return (
+    `${year}-${month}-${day}` +
+    `T${hour}:${minute}`
+  );
+}
+
+
+function setDefaultPeriodeLaporan() {
+
+  const now =
+    new Date();
+
+  const awalBulan =
+    new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      1,
+      0,
+      0,
+      0
+    );
+
+
+  const inputAwal =
+    document.getElementById(
+      "waktuAwal"
+    );
+
+  const inputAkhir =
+    document.getElementById(
+      "waktuAkhir"
+    );
+
+
+  if (inputAwal) {
+
+    inputAwal.value =
+      formatDatetimeLocal(
+        awalBulan
+      );
+
+  }
+
+
+  if (inputAkhir) {
+
+    inputAkhir.value =
+      formatDatetimeLocal(
+        now
+      );
+
+  }
+
+}
+
+// ================= RENDER RIWAYAT =================
+
+function renderRiwayat(hasil){
+
+  // ================= SUMMARY =================
+
+  renderSummaryRiwayat(hasil);
+
+  // =====================================================
+  // RESET TAMPILAN
+  // =====================================================
+
+  document.getElementById(
+    "listTanggal"
+  ).innerHTML = "";
+
+  document.getElementById(
+    "listKategori"
+  ).innerHTML = "";
+
+  document.getElementById(
+    "cardListTanggal"
+  ).style.display = "none";
+
+
+  // =====================================================
+  // LIST BULAN
+  // =====================================================
+
+  const listBulan =
+    document.getElementById(
+      "listBulan"
+    );
+
+  listBulan.innerHTML = "";
+
+  activeBulan = null;
+  activeCard = null;
+
+
+  // =====================================================
+  // AMBIL BULAN
+  // =====================================================
+
+  const bulanKeys =
+    Object.keys(
+      hasil.bulan || {}
+    )
+    .sort(
+      (a,b) =>
+        b.localeCompare(a)
+    );
+
+
+  // =====================================================
+  // KOSONG
+  // =====================================================
+
+  if(bulanKeys.length === 0){
+
+    listBulan.innerHTML = `
+      <p>Belum ada transaksi</p>
+    `;
+
+    return;
+  }
+
+
+  // =====================================================
+  // RENDER BULAN
+  // =====================================================
+
+  bulanKeys.forEach(key => {
+
+    const card =
+      document.createElement("div");
+
+
+    card.className = "card";
+
+    card.style.cursor =
+      "pointer";
+
+    card.style.marginBottom =
+      "10px";
+
+
+    card.innerHTML = `
+      <strong>
+        ${namaBulan(key)}
+      </strong>
+    `;
+
+
+    // ===================================================
+    // KLIK BULAN
+    // ===================================================
+
+    card.onclick = () => {
+
+      limitTanggal = 5;
+
+
+      const cardListTanggal =
+        document.getElementById(
+          "cardListTanggal"
+        );
+
+
+      // ==============================
+      // HAPUS BULAN SEBELUMNYA
+      // ==============================
+
+      if(
+        activeCard &&
+        activeCard !== card
+      ){
+
+        activeCard.classList.remove(
+          "cardBulanAktif"
+        );
+
+      }
+
+
+      // ==============================
+      // TOGGLE
+      // ==============================
+
+      if(
+        activeBulan === key
+      ){
+
+        activeBulan = null;
+
+        card.classList.remove(
+          "cardBulanAktif"
+        );
+
+        activeCard = null;
+
+
+        document.getElementById(
+          "listTanggal"
+        ).innerHTML = "";
+
+
+        cardListTanggal.style.display =
+          "none";
+
+
+        return;
+      }
+
+
+      // ==============================
+      // AKTIFKAN BULAN
+      // ==============================
+
+      activeBulan = key;
+
+      card.classList.add(
+        "cardBulanAktif"
+      );
+
+      activeCard = card;
+
+
+      cardListTanggal.style.display =
+        "block";
+
+
+      // ==============================
+      // SUMMARY BULAN
+      // ==============================
+
+      let totalMasuk = 0;
+      let totalKeluar = 0;
+
+
+      hasil.bulan[key].forEach(
+        trx => {
+
+          if(
+            trx.jenis === "masuk"
+          ){
+
+            totalMasuk +=
+              Number(
+                trx.nominal
+              );
+
+          }
+
+
+          if(
+            trx.jenis === "keluar"
+          ){
+
+            totalKeluar +=
+              Number(
+                trx.nominal
+              );
+
+          }
+
+        }
+      );
+
+
+      // ==============================
+      // RENDER SUMMARY
+      // ==============================
+
+      document.getElementById(
+        "listTanggal"
+      ).innerHTML = `
+
+        <div class="summaryBulanan">
+
+          <div class="summaryCard masuk">
+
+            <div>Pemasukan</div>
+
+            <strong>
+              ${formatRupiah(
+                totalMasuk
+              )}
+            </strong>
+
+          </div>
+
+
+          <div class="summaryCard keluar">
+
+            <div>Pengeluaran</div>
+
+            <strong>
+              ${formatRupiah(
+                totalKeluar
+              )}
+            </strong>
+
+          </div>
+
+        </div>
+
+      `;
+
+
+      // ==============================
+      // RENDER DETAIL
+      // ==============================
+
+      renderTanggal(
+        hasil.bulan[key]
+      );
+
+
+      renderKategori(
+        hasil.bulan[key]
+      );
+
+    };
+
+
+    listBulan.appendChild(
+      card
+    );
+
+  });
+
 }
 
 // ================= LOAD =================
 
-async function loadRiwayat(){
+async function loadRiwayat(force = false){
+
+  if(riwayatLoading){
+    return;
+  }
+
+  const cache = getRiwayatCache();
 
 
-  try{
+  // =====================================================
+  // CACHE MASIH FRESH
+  // LANGSUNG TAMPILKAN
+  // =====================================================
 
-    document.getElementById("listTanggal").innerHTML = "";
-    document.getElementById("listKategori").innerHTML = "";
-    document.getElementById("cardListTanggal").style.display = "none";
-    document.getElementById("menuLaporan").style.display = "none";
+  if(
+    cache &&
+    cache.data &&
+    !force
+  ){
 
-    const res =
-      await fetch(
+    const umur =
+      Date.now() - cache.time;
 
-        API +
 
-        "?mode=riwayat&userId=" +
+    if(
+      umur < RIWAYAT_CACHE_TIME
+    ){
 
-        user.userId
+      renderRiwayat(
+        cache.data
       );
-
-    const hasil =
-      await res.json();
-
-    // ================= LIST BULAN =================
-
-    const listBulan =
-      document.getElementById("listBulan");
-
-    listBulan.innerHTML = "";
-
-    let activeBulan = null;
-    let activeCard = null;
-
-    const bulanKeys =
-      Object.keys(hasil.bulan || {})
-      .sort((a, b) => b.localeCompare(a));
-
-
-
-    if (bulanKeys.length === 0) {
-
-      listBulan.innerHTML = `
-        
-          <p>Belum ada transaksi</p>
-        
-      `;
 
       return;
     }
 
-    bulanKeys.forEach(key => {
 
-        const card =
-          document.createElement("div");
+    // ===================================================
+    // CACHE LAMA
+    // TAMPILKAN CACHE DAHULU
+    // ===================================================
 
-        card.className =
-          "card";
+    renderRiwayat(
+      cache.data
+    );
 
-        card.style.cursor =
-          "pointer";
+  }else{
 
-        card.style.marginBottom =
-          "10px";
+    // ===================================================
+    // BELUM ADA CACHE / FORCE
+    // TAMPILKAN SKELETON
+    // ===================================================
 
-        card.innerHTML = `
-          <strong>${namaBulan(key)}</strong>
-        `;
+    showRiwayatSkeleton();
 
-    
+  }
 
-      card.onclick = () => {
 
-        limitTanggal = 5;
-        limitTransaksi = 5;
+  // =====================================================
+  // FETCH DATA TERBARU
+  // =====================================================
 
-        const cardListTanggal =
-          document.getElementById("cardListTanggal");
+  riwayatLoading = true;
 
-        // hapus warna bulan sebelumnya
-        if(activeCard && activeCard !== card){
+  try{
 
-          activeCard.classList.remove(
-            "cardBulanAktif"
-          );
-        }
-
-        // ================= TOGGLE =================
-
-        if(activeBulan === key){
-
-          activeBulan = null;
-
-          card.classList.remove(
-            "cardBulanAktif"
-          );
-
-          activeCard = null;
-
-          document.getElementById("listTanggal")
-            .innerHTML = "";
-
-          cardListTanggal.style.display = "none";
-
-          document.getElementById(
-            "menuLaporan"
-          ).style.display = "none";
-
-          return;
-        }
-
-        activeBulan = key;
-
-        card.classList.add(
-          "cardBulanAktif"
-        );
-
-        activeCard = card;
-
-        cardListTanggal.style.display = "block";
-
-        document.getElementById(
-          "menuLaporan"
-        ).style.display = "flex";
-
-        // ================= HITUNG SUMMARY =================
-
-        let totalMasuk = 0;
-        let totalKeluar = 0;
-
-        hasil.bulan[key].forEach(trx => {
-
-          if(trx.jenis === "masuk"){
-
-            totalMasuk +=
-              Number(trx.nominal);
-          }
-
-          if(trx.jenis === "keluar"){
-
-            totalKeluar +=
-              Number(trx.nominal);
-          }
-
-        });
-
-        // ================= RENDER =================
-
-        document.getElementById("listTanggal")
-          .innerHTML = `
-          
-          <div class="summaryBulanan">
-
-            <div class="summaryCard masuk">
-
-              <div>Pemasukan</div>
-
-              <strong>
-                ${formatRupiah(totalMasuk)}
-              </strong>
-
-            </div>
-
-            <div class="summaryCard keluar">
-
-              <div>Pengeluaran</div>
-
-              <strong>
-                ${formatRupiah(totalKeluar)}
-              </strong>
-
-            </div>
-
-          </div>
-
-          <div class="filter-pdf">
-
-            <h3>Unduh Laporan</h3>
-
-            <label>Dari Tanggal</label>
-            <input type="date" id="tglAwal">
-
-            <label>Sampai Tanggal</label>
-            <input type="date" id="tglAkhir">
-
-            <div class="btnDownloadPdf">
-              <button
-                class="btnPdf"
-                onclick="handleDownloadPDF(this, '${key}')"
-              >
-                📄 Download PDF
-              </button>
-            </div>
-
-          </div>
-
-        `;
-
-        // isi otomatis tanggal
-        const [tahun, bulan] = key.split("-");
-
-        const lastDay =
-          new Date(tahun, bulan, 0).getDate();
-
-        document.getElementById("tglAwal").value =
-          `${tahun}-${bulan}-01`;
-
-        document.getElementById("tglAkhir").value =
-          `${tahun}-${bulan}-${String(lastDay).padStart(2, "0")}`;
-
-        renderTanggal(
-          hasil.bulan[key]
-        );
-
-        renderKategori(
-          hasil.bulan[key]
-        );
-
-      };
-
-      listBulan.appendChild(card);
-
+    const hasil = await getAPI({
+      mode: "riwayat",
+      userId: user.userId
     });
+
+
+    if(!hasil.ok){
+
+      throw new Error(
+        hasil.message ||
+        "Gagal mengambil riwayat"
+      );
+
+    }
+
+
+    // ===================================================
+    // SIMPAN CACHE
+    // ===================================================
+
+    saveRiwayatCache(
+      hasil
+    );
+
+
+    // ===================================================
+    // RENDER DATA TERBARU
+    // ===================================================
+
+    renderRiwayat(
+      hasil
+    );
+
 
   }catch(err){
 
-    console.error(err);
-
-    showToast(
-      "Gagal load laporan"
+    console.error(
+      "Riwayat error:",
+      err
     );
+
+
+    // ===================================================
+    // KALAU ADA CACHE
+    // ===================================================
+
+    if(
+      cache &&
+      cache.data
+    ){
+
+      renderRiwayat(
+        cache.data
+      );
+
+    }else{
+
+      document.getElementById(
+        "listBulan"
+      ).innerHTML =
+        `<p>Gagal memuat riwayat transaksi.</p>`;
+
+      showToast(
+        "Gagal load riwayat transaksi"
+      );
+
+    }
+
+
+  }finally{
+
+    riwayatLoading = false;
+
   }
+
 }
 
 // ================ grup by tanggal ===================
@@ -704,8 +1172,18 @@ document.addEventListener("click", function(e){
 
 // ================== base64 image ==================
 async function getImageBase64(fileId) {
-  const res = await fetch(API + "?mode=image&id=" + fileId);
-  const data = await res.json();
+
+  const data = await getAPI({
+    mode: "image",
+    id: fileId
+  });
+
+  if (!data || !data.base64) {
+    throw new Error(
+      "Server tidak mengembalikan gambar"
+    );
+  }
+
   return data.base64;
 }
 
@@ -912,47 +1390,104 @@ function updateButtonLoadMoreTanggal(){
 
 // ===================== proses download pdf ========================
 
-async function handleDownloadPDF(btn, key) {
+async function handleDownloadPDF(btn) {
 
   btn.disabled = true;
-  const oldText = btn.innerHTML;
-  btn.innerHTML = "⏳ Sedang membuat PDF...";
+
+  const oldText =
+    btn.innerHTML;
+
+  updateProgressButton(
+    btn,
+    0,
+    "Menyiapkan..."
+  );
+
 
   try {
 
-    const tglAwal =
-      document.getElementById("tglAwal").value;
+    const waktuAwal =
+      document.getElementById(
+        "waktuAwal"
+      ).value;
 
-    const tglAkhir =
-      document.getElementById("tglAkhir").value;
 
-    // VALIDASI
-    if (!tglAwal || !tglAkhir) {
-      alert("Silakan pilih tanggal terlebih dahulu");
+    const waktuAkhir =
+      document.getElementById(
+        "waktuAkhir"
+      ).value;
+
+
+    if (
+      !waktuAwal ||
+      !waktuAkhir
+    ) {
+
+      alert(
+        "Silakan pilih waktu awal dan waktu akhir"
+      );
+
       return;
     }
 
-    if (new Date(tglAwal) > new Date(tglAkhir)) {
-      alert("Tanggal awal tidak boleh lebih besar dari tanggal akhir");
+
+    const start =
+      parseDatetimeLocal(
+        waktuAwal
+      );
+
+    const end =
+      parseDatetimeLocal(
+        waktuAkhir
+      );
+
+
+    if (!start || !end) {
+
+      alert(
+        "Format waktu tidak valid"
+      );
+
       return;
     }
+
+
+    if (start > end) {
+
+      alert(
+        "Waktu awal tidak boleh lebih besar dari waktu akhir"
+      );
+
+      return;
+    }
+
 
     await downloadLaporanPDF(
-      key,
-      tglAwal,
-      tglAkhir,
+      waktuAwal,
+      waktuAkhir,
       btn
     );
+
 
   } catch (err) {
 
     console.error(err);
-    alert("Gagal download PDF");
+
+    alert(
+      err.message ||
+      "Gagal download PDF"
+    );
+
 
   } finally {
 
     btn.disabled = false;
-    btn.innerHTML = oldText;
+
+    setTimeout(() => {
+
+      btn.innerHTML = oldText;
+
+    }, 1000);
 
   }
 
@@ -1106,7 +1641,13 @@ async function hapusTransaksiUI(id){
         "Transaksi berhasil dihapus"
       );
 
-      await loadRiwayat();
+      localStorage.removeItem(
+          "dashboard_cache_" + user.userId
+      );
+
+      clearRiwayatCache();
+
+      await loadRiwayat(true);
 
     }else{
 
@@ -1129,6 +1670,76 @@ async function hapusTransaksiUI(id){
 
 }
 
-// ================= LOAD =================
+function hitungSummaryRiwayat(hasil){
 
-loadRiwayat();
+  let masuk = 0;
+  let keluar = 0;
+
+  Object.values(hasil.bulan || {}).forEach(data => {
+
+    data.forEach(trx => {
+
+      const nominal = Number(trx.nominal) || 0;
+
+      if(trx.jenis === "masuk"){
+        masuk += nominal;
+      }
+
+      if(trx.jenis === "keluar"){
+        keluar += nominal;
+      }
+
+    });
+
+  });
+
+  return {
+    masuk: masuk,
+    keluar: keluar,
+    saldo: masuk - keluar
+  };
+
+}
+
+function renderSummaryRiwayat(hasil){
+
+  const summary = hitungSummaryRiwayat(hasil);
+
+  const totalMasuk =
+    document.getElementById("totalMasuk");
+
+  const totalKeluar =
+    document.getElementById("totalKeluar");
+
+  const sisaSaldo =
+    document.getElementById("sisaSaldo");
+
+
+  if(totalMasuk){
+    totalMasuk.innerText =
+      formatRupiah(summary.masuk);
+  }
+
+  if(totalKeluar){
+    totalKeluar.innerText =
+      formatRupiah(summary.keluar);
+  }
+
+  if(sisaSaldo){
+    sisaSaldo.innerText =
+      formatRupiah(summary.saldo);
+  }
+
+}
+
+// ================= LOAD =================
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    setDefaultPeriodeLaporan();
+
+    loadRiwayat();
+
+  }
+);

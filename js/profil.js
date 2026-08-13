@@ -63,12 +63,7 @@ btnSimpan.addEventListener("click", async function () {
 
   try {
 
-    const res = await fetch(API, {
-      method: "POST",
-      body: JSON.stringify(data)
-    });
-
-    const r = await res.json();
+    const r = await postAPI(data);
 
     btnSimpan.disabled = false;
     btnSimpan.innerText = "Simpan";
@@ -81,6 +76,9 @@ btnSimpan.addEventListener("click", async function () {
     showToast("Profil berhasil disimpan");
 
     setTimeout(() => {
+      localStorage.removeItem(
+        "profil_" + user.userId
+      );
       location.replace("dashboard.html");
     }, 1000);
     
